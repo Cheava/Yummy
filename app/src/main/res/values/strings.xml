@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Yummy</string>
+    <string name="title_activity_lock_screen">LockScreenActivity</string>
+    <string name="dummy_content">Hello World</string>
+    <string name="exit_content">轻触退出Yummy</string>
+</resources>
