@@ -33,20 +33,11 @@ public class ContentProvider {
 
 
     public void getWord(Context context){
-        Message message = new Message();
-        message.what = Constants.SHOW_WORD;
-        // 将服务器返回的结果存放到Message中
-        message.obj = result;
-        Log.d("getWordFromNet",result);
-        handler.sendMessage(message);
+
     }
 
     public void getImg(Context context){
-        Message message = new Message();
-        message.what = Constants.SHOW_IMG;
-        // 将服务器返回的结果存放到Message中
-        message.obj = bmp;
-        handler.sendMessage(message);
+
     }
 
 }
