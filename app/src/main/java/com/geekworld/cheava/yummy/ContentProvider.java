@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -25,19 +26,20 @@ import java.net.URL;
 public class ContentProvider {
 
     Handler handler;
+    ACache acache = ACache.get(BaseApplication.context());
 
     public ContentProvider(Handler handler) {
         this.handler = handler;
     }
 
+    public Bitmap getImg() {
+        int id = RandomUtils.nextInt(0, NetUtil.getImgSum());
+        return acache.getAsBitmap(Integer.toString(id));
+    }
 
-
-    public void getWord(Context context){
+    public void getWord() {
 
     }
 
-    public void getImg(Context context){
-
-    }
 
 }

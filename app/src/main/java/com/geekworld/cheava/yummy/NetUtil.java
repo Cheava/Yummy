@@ -2,20 +2,15 @@ package com.geekworld.cheava.yummy;
 
 import android.graphics.Bitmap;
 
+import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.google.gson.Gson;
 
+import org.apache.commons.lang3.RandomUtils;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import okhttp3.ResponseBody;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,67 +21,178 @@ import retrofit2.Retrofit;
  * Created by Cheava on 2016/8/2 0002.
  */
 public class NetUtil {
-    String wordsite = "https://api.acman.cn/";
-    String imgsite = "https://unsplash.it/";
-    String web_res = "Hello World";
+    static Bitmap bitmapAsy;
+    static Word wordAsy;
+    static Bitmap bitmap;
+    static Word word;
+    static int word_id = 0;
+    static int img_id = 0;
+    static String word_site = "https://api.acman.cn/";
+    static String img_site = "https://unsplash.it/";
 
-    public void queryWord(String id) {
+    static ACache img_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_IMG);
+    static ACache word_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_WORD);
+
+    static public Word queryWord(String base_url, int id) {
         //1.创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())//解析方法
-                .baseUrl(wordsite)//主机地址
+                .baseUrl(base_url)//主机地址
                 .build();
 
         //2.创建访问API的请求
-        Call<WordJson> call = retrofit.create(Word.class).getResult(id);
-        call.enqueue(new Callback<WordJson>() {
+        Call<Word> call = retrofit.create(WordSite.class).getResult(Integer.toString(id));
+        try {
+            word = call.execute().body();
+        } catch (Exception e) {
+            e.printStackTrace();
+            word = null;
+        }
+        return word;
+    }
+
+    static public Bitmap queryImage(String base_url, int id, String width, String height) {
+        //1.创建Retrofit对象
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(base_url)//主机地址
+                .build();
+
+        //2.创建访问API的请求
+        Call<ResponseBody> call = retrofit.create(ImageSite.class).getResult(width, height, Integer.toString(id));
+        try {
+            ResponseBody responseBody = call.execute().body();
+            try {
+                byte date[] = responseBody.bytes();
+                bitmap = BitmapFactory.decodeByteArray(date, 0, date.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            bitmap = null;
+        }
+        return bitmap;
+    }
+
+    static public void queryWordAsy(String base_url, int id) {
+        //1.创建Retrofit对象
+        Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())//解析方法
+                .baseUrl(base_url)//主机地址
+                .build();
+
+        //2.创建访问API的请求
+        Call<Word> call = retrofit.create(WordSite.class).getResult(Integer.toString(id));
+        call.enqueue(new Callback<Word>() {
             @Override
-            public void onResponse(Call<WordJson> call, Response<WordJson> response) {
+            public void onResponse(Call<Word> call, Response<Word> response) {
                 //请求成功
                 if (response.isSuccess()) {
-                    WordJson result = response.body();
-                    if (result != null) {
-                        String word = result.getTaici();
-                    }
+                    wordAsy = response.body();
+                    Message message = new Message();
+                    message.what = Constants.DOWN_WORD;
+                    // 将服务器返回的结果存放到Message中
+                    message.obj = wordAsy;
+                    handler.sendMessage(message);
                 }
             }
 
             @Override
-            public void onFailure(Call<WordJson> call, Throwable t) {
+            public void onFailure(Call<Word> call, Throwable t) {
                 //请求失败
-                Log.e("retrofit", "onFailure_queryWord");
+                Log.e("retrofit", "onFailure_queryWordAsy");
             }
         });
     }
 
-    public void queryImage(String id) {
-        int[] screensize = BaseApplication.getDisplaySize();
-        String width = Integer.toString(screensize[0]);
-        String height = Integer.toString(screensize[1]);
+    static public void queryImageAsy(String base_url, int id, String width, String height) {
         //1.创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(imgsite)//主机地址
+                .baseUrl(base_url)//主机地址
                 .build();
 
         //2.创建访问API的请求
-        Call<Bitmap> call = retrofit.create(Image.class).getResult(width, height, id);
-        call.enqueue(new Callback<Bitmap>() {
+        Call<ResponseBody> call = retrofit.create(ImageSite.class).getResult(width, height, Integer.toString(id));
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Bitmap> call, Response<Bitmap> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccess()) {
-                    Bitmap result = response.body();
+                    ResponseBody responseBody = response.body();
+                    try {
+                        byte date[] = responseBody.bytes();
+                        bitmapAsy = BitmapFactory.decodeByteArray(date, 0, date.length);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    Message message = new Message();
+                    message.what = Constants.DOWN_IMG;
+                    // 将服务器返回的结果存放到Message中
+                    message.obj = bitmapAsy;
+                    handler.sendMessage(message);
                 }
             }
 
             @Override
-            public void onFailure(Call<Bitmap> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 //请求失败
                 Log.e("retrofit", "onFailure_queryImage");
             }
         });
     }
 
+    static public void downloadWord() {
+        int rsi = RandomUtils.nextInt(0, 1000);
+        int id = rsi % Constants.MAX_WORD;
+        queryWordAsy(word_site, id);
+    }
 
+    static public void downloadImg() {
+        int rsi = RandomUtils.nextInt(0, 1000);
+        int id = rsi % Constants.MAX_IMG;
+        int[] screen_size = BaseApplication.getDisplaySize();
+        String width = Integer.toString(screen_size[0]);
+        String height = Integer.toString(screen_size[1]);
+        queryImageAsy(img_site, id, width, height);
+    }
+
+    static private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.DOWN_WORD:
+                    Word wordJson = (Word) msg.obj;
+                    String word = wordJson.getTaici();
+                    DataUtils.save(word_id, word);
+                    word_id = word_id + 1;
+                    if (word_id >= Constants.MAX_WORD) {
+                        word_id = 0;
+                        BaseApplication.sendLocalBroadcast(Constants.WORD_DOWNLOAD_DONE);
+                    } else {
+                        BaseApplication.sendLocalBroadcast(Constants.WORD_DOWNLOADING);
+                    }
+                    break;
+                case Constants.DOWN_IMG:
+                    Bitmap bmp = (Bitmap) msg.obj;
+                    DataUtils.save(img_id, bmp);
+                    img_id = img_id + 1;
+                    if (img_id >= Constants.MAX_WORD) {
+                        BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOAD_DONE);
+
+                    } else {
+                        BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOADING);
+                    }
+                    break;
+            }
+        }
+    };
+
+    static public int getImgSum() {
+        return img_id;
+    }
+
+    static public int getWordSum() {
+        return word_id;
+    }
 /*
     public String getRealImgSite(String id){
         int [] screensize = BaseApplication.getDisplaySize();
@@ -102,8 +208,8 @@ public class NetUtil {
             public void run() {
                 HttpURLConnection connection = null;
                 try {
-                    imgsite = getRealImgSite(id);
-                    URL url = new URL(imgsite);
+                    img_site = getRealImgSite(id);
+                    URL url = new URL(img_site);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(10000);
@@ -138,7 +244,7 @@ public class NetUtil {
             public void run() {
                 HttpURLConnection connection = null;
                 try {
-                    URL url = new URL(wordsite);
+                    URL url = new URL(word_site);
                     connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);

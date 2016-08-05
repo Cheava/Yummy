@@ -3,19 +3,26 @@ package com.geekworld.cheava.yummy;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
+
+import com.geekworld.cheava.greendao.DaoMaster;
+import com.geekworld.cheava.greendao.DaoSession;
 
 
 /**
  * Created by Cheava on 2016/7/27 0027.
  */
 public class BaseApplication extends Application {
-    private static String PREF_NAME = "geekworld.pref";
+    static private String PREF_NAME = "geekworld.pref";
+    static private String KEY_CONNECTED = "connected";
     static BaseApplication _context;
 
     @Override 
@@ -23,6 +30,7 @@ public class BaseApplication extends Application {
         super.onCreate();
         _context = this;
     }
+
     public static synchronized BaseApplication context() {
         return  _context;
     }
@@ -41,8 +49,18 @@ public class BaseApplication extends Application {
         editor.apply();
     }
 
+    public static void set(String key, boolean value) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
     public static int get(String key, int defValue) {
         return getPreferences().getInt(key, defValue);
+    }
+
+    public static boolean get(String key, boolean defValue) {
+        return getPreferences().getBoolean(key, defValue);
     }
 
     public static void saveDisplaySize(Context context) {
@@ -61,10 +79,20 @@ public class BaseApplication extends Application {
                 getPreferences().getInt("screen_height", 1280)};
     }
 
-    public static boolean isConnected(Context context){
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return (networkInfo!=null && networkInfo.isAvailable());
+    public static boolean isConnected() {
+        return get(KEY_CONNECTED, false);
+    }
+
+    public static void setConnected(Boolean connected) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putBoolean(KEY_CONNECTED, connected);
+        editor.commit();
+    }
+
+    public static void sendLocalBroadcast(String info) {
+        Intent intent = new Intent(info);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context());
+        localBroadcastManager.sendBroadcast(intent); // 发送本地广播
     }
 
 }

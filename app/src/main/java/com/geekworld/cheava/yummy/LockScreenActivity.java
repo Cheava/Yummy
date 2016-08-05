@@ -73,15 +73,13 @@ public class LockScreenActivity extends SwipeBackActivity{
 
     private TimerTask wordTask = new TimerTask(){
         public void run() {
-            ContentProvider contentProvider = new ContentProvider(handler);
-            contentProvider.getWord(context);
+
         }
     };
 
     private TimerTask imgTask = new TimerTask(){
         public void run() {
-            ContentProvider contentProvider = new ContentProvider(handler);
-            contentProvider.getImg(context);
+
         }
     };
 

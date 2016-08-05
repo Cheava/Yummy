@@ -2,16 +2,32 @@ package com.geekworld.cheava.yummy;
 
 import android.graphics.Bitmap;
 
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
-
 /**
- * Created by wangzh on 2016/8/2.
+ * Created by wangzh on 2016/8/4.
  */
+public class Image {
 
-public interface Image {
-    @GET("{screen_width}/{screen_height}/{image}")
-    Call<Bitmap> getResult(@Path("screen_width") String screen_width, @Path("screen_height") String screen_height, @Query("image") String id);
+    /**
+     * id : 73
+     * img : null
+     */
+
+    private String id;
+    private Bitmap img;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Bitmap getImg() {
+        return img;
+    }
+
+    public void setImg(Bitmap img) {
+        this.img = img;
+    }
 }

@@ -453,11 +453,11 @@ public class ACache {
     }
 
     // =======================================
-    // ============== bitmap 数据 读写 =============
+    // ============== bitmapAsy 数据 读写 =============
     // =======================================
 
     /**
-     * 保存 bitmap 到 缓存中
+     * 保存 bitmapAsy 到 缓存中
      *
      * @param key
      *            保存的key
@@ -469,12 +469,12 @@ public class ACache {
     }
 
     /**
-     * 保存 bitmap 到 缓存中
+     * 保存 bitmapAsy 到 缓存中
      *
      * @param key
      *            保存的key
      * @param value
-     *            保存的 bitmap 数据
+     *            保存的 bitmapAsy 数据
      * @param saveTime
      *            保存的时间，单位：秒
      */
@@ -483,10 +483,10 @@ public class ACache {
     }
 
     /**
-     * 读取 bitmap 数据
+     * 读取 bitmapAsy 数据
      *
      * @param key
-     * @return bitmap 数据
+     * @return bitmapAsy 数据
      */
     public Bitmap getAsBitmap(String key) {
         if (getAsBinary(key) == null) {
@@ -854,9 +854,9 @@ public class ACache {
             // 取 drawable 的颜色格式
             Bitmap.Config config = drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
                     : Bitmap.Config.RGB_565;
-            // 建立对应 bitmap
+            // 建立对应 bitmapAsy
             Bitmap bitmap = Bitmap.createBitmap(w, h, config);
-            // 建立对应 bitmap 的画布
+            // 建立对应 bitmapAsy 的画布
             Canvas canvas = new Canvas(bitmap);
             drawable.setBounds(0, 0, w, h);
             // 把 drawable 内容画到画布中
