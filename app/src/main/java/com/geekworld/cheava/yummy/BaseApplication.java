@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -24,11 +25,32 @@ public class BaseApplication extends Application {
     static private String PREF_NAME = "geekworld.pref";
     static private String KEY_CONNECTED = "connected";
     static BaseApplication _context;
+    public static DaoMaster daoMaster;
+    public static DaoSession daoSession;
+    public static SQLiteDatabase db;
+    public static DaoMaster.DevOpenHelper helper;
+
+
+    public static DaoSession getDaoSession() {
+        return daoSession;
+    }
+
+    public static SQLiteDatabase getSqLiteDatabase() {
+        return db;
+    }
 
     @Override 
     public void onCreate() {
         super.onCreate();
         _context = this;
+        /*
+      * 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的
+        SQLiteOpenHelper 对象
+      */
+        helper = new DaoMaster.DevOpenHelper(BaseApplication.context(), "Content.db", null);
+        db = helper.getWritableDatabase();
+        daoMaster = new DaoMaster(db);
+        daoSession = daoMaster.newSession();
     }
 
     public static synchronized BaseApplication context() {
@@ -95,4 +117,10 @@ public class BaseApplication extends Application {
         localBroadcastManager.sendBroadcast(intent); // 发送本地广播
     }
 
+    public static String getImgName(int key){
+        return Integer.toString(key)+".jpg"; //获得私有文件的目录
+    }
+    public static String getImgPath(int key){
+        return context().getFilesDir().getAbsolutePath()+getImgName(key); //获得私有文件的目录
+    }
 }

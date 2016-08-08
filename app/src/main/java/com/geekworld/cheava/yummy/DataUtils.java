@@ -3,11 +3,13 @@ package com.geekworld.cheava.yummy;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -16,45 +18,28 @@ import java.io.OutputStreamWriter;
  * Created by wangzh on 2016/8/4.
  */
 public class DataUtils {
-    public static DaoMaster daoMaster;
-    public static DaoSession daoSession;
-    public static SQLiteDatabase db;
-    public static DaoMaster.DevOpenHelper helper;
-
-
-    public DataUtils() {
-      /*
-      * 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的
-        SQLiteOpenHelper 对象
-      */
-        helper = new DaoMaster.DevOpenHelper(BaseApplication.context(), "Content.db", null);
-        db = helper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
-    }
-
-
-    public static DaoSession getDaoSession() {
-        return daoSession;
-    }
-
-    public static SQLiteDatabase getSqLiteDatabase() {
-        return db;
-    }
+    static Context context = BaseApplication.context();
 
     static public void save(int key, String str) {
 
     }
 
     static public void save(int key, Bitmap bmp) {
-        FileOutputStream out = null;
-        BufferedWriter writer = null;
+        if(saveImg(key,bmp)){
+            BaseApplication.getImgPath(key);
+        }
+    }
+
+    static public boolean saveImg(int key, Bitmap bmp) {
+        FileOutputStream writer = null;
         try {
-            out = openFileOutput("data", Context.MODE_PRIVATE);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-            writer.write(bmp);
+            writer = context.openFileOutput(BaseApplication.getImgName(key), Context.MODE_PRIVATE);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, writer);
+            writer.flush();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         } finally {
             try {
                 if (writer != null) {
@@ -62,7 +47,12 @@ public class DataUtils {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                return false;
             }
         }
+    }
+
+    static public void deleteImg(int key){
+        context.deleteFile(BaseApplication.getImgName(key));
     }
 }

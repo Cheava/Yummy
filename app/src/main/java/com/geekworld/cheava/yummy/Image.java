@@ -1,19 +1,18 @@
 package com.geekworld.cheava.yummy;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by wangzh on 2016/8/4.
  */
 public class Image {
 
+
     /**
      * id : 73
-     * img : null
+     * path : /data/data
      */
 
     private String id;
-    private Bitmap img;
+    private String path;
 
     public String getId() {
         return id;
@@ -23,11 +22,11 @@ public class Image {
         this.id = id;
     }
 
-    public Bitmap getImg() {
-        return img;
+    public String getPath() {
+        return path;
     }
 
-    public void setImg(Bitmap img) {
-        this.img = img;
+    public void setPath(String path) {
+        this.path = path;
     }
 }
