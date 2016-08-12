@@ -12,6 +12,8 @@ public class Constants {
 
     public static final int MAX_IMG = 50;
     public static final int MAX_WORD = 100;
+    public static final int IMG_DUTY = 5;
+    public static final int WORD_DUTY = 5;
 
     public static final String IMG_DOWNLOAD_DONE = "com.geekworld.cheava.yummy.IMG_DOWNLOAD_DONE";
     public static final String WORD_DOWNLOAD_DONE = "com.geekworld.cheava.yummy.WORD_DOWNLOAD_DONE";

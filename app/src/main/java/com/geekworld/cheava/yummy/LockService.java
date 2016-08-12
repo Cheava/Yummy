@@ -35,6 +35,8 @@ public class LockService extends Service {
         filter.addAction(Constants.WORD_DOWNLOADING);
         registerReceiver(receiver, filter);
         // 注册广播监听器
+        NetUtil.downloadWord();
+        NetUtil.downloadImg();
     }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -60,13 +62,14 @@ public class LockService extends Service {
                     NetworkInfo networkInfo = (NetworkInfo) parcelableExtra;
                     NetworkInfo.State state = networkInfo.getState();
                     boolean isConnected = state == NetworkInfo.State.CONNECTED;// 当然，这边可以更精确的确定状态
-                    Log.e(TAG, "isConnected " + isConnected);
+                    Log.d(TAG, "isConnected " + isConnected);
                     if (isConnected) {
-                        NetUtil.downloadImg();
-                        NetUtil.downloadWord();
-                        BaseApplication.setConnected(isConnected);
+                        //NetUtil.downloadImg();
+                        // NetUtil.downloadWord();
+                        BaseApplication.setConnected(true);
                     } else {
-                        BaseApplication.setConnected(isConnected);
+
+                        BaseApplication.setConnected(false);
                     }
                 }
             }
@@ -85,7 +88,5 @@ public class LockService extends Service {
         super.onDestroy();
         unregisterReceiver(receiver);
     }
-
-
 
 }

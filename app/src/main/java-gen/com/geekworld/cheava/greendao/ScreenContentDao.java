@@ -25,8 +25,7 @@ public class ScreenContentDao extends AbstractDao<ScreenContent, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Image = new Property(1, String.class, "image", false, "IMAGE");
-        public final static Property Word = new Property(2, String.class, "word", false, "WORD");
+        public final static Property Word = new Property(1, String.class, "word", false, "WORD");
     }
 
     ;
@@ -44,79 +43,61 @@ public class ScreenContentDao extends AbstractDao<ScreenContent, Long> {
      * Creates the underlying database table.
      */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
-        String constraint = ifNotExists ? "IF NOT EXISTS " : "";
+        String constraint = ifNotExists ? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"SCREEN_CONTENT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"IMAGE\" TEXT NOT NULL ," + // 1: image
-                "\"WORD\" TEXT NOT NULL );"); // 2: word
+                "\"WORD\" TEXT NOT NULL );"); // 1: word
     }
 
-    /**
-     * Drops the underlying database table.
-     */
+    /** Drops the underlying database table. */
     public static void dropTable(SQLiteDatabase db, boolean ifExists) {
         String sql = "DROP TABLE " + (ifExists ? "IF EXISTS " : "") + "\"SCREEN_CONTENT\"";
         db.execSQL(sql);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected void bindValues(SQLiteStatement stmt, ScreenContent entity) {
         stmt.clearBindings();
-
+ 
         Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindString(2, entity.getImage());
-        stmt.bindString(3, entity.getWord());
+        stmt.bindString(2, entity.getWord());
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public Long readKey(Cursor cursor, int offset) {
         return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public ScreenContent readEntity(Cursor cursor, int offset) {
         ScreenContent entity = new ScreenContent( //
                 cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-                cursor.getString(offset + 1), // image
-                cursor.getString(offset + 2) // word
+                cursor.getString(offset + 1) // word
         );
         return entity;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ScreenContent entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setImage(cursor.getString(offset + 1));
-        entity.setWord(cursor.getString(offset + 2));
+        entity.setWord(cursor.getString(offset + 1));
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     protected Long updateKeyAfterInsert(ScreenContent entity, long rowId) {
         entity.setId(rowId);
         return rowId;
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritdoc */
     @Override
     public Long getKey(ScreenContent entity) {
         if (entity != null) {
@@ -129,9 +110,9 @@ public class ScreenContentDao extends AbstractDao<ScreenContent, Long> {
     /**
      * @inheritdoc
      */
-    @Override
+    @Override    
     protected boolean isEntityUpdateable() {
         return true;
     }
-
+    
 }

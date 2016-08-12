@@ -25,14 +25,14 @@ public class Greendaogenerator {
 
     private static void addScreenContent(Schema schema) {
         // 4、一个实体类就关联到数据库中的一张表，此处表名为：ScreenWord
-        Entity entity = schema.addEntity("ScreenWord");
+        Entity entity = schema.addEntity("ScreenContent");
         // 5、设置数据库表中的字段（greenDao会自动根据实体类的属性来创建表字段，并赋予默认值）
         entity.addIdProperty().autoincrement();
         entity.addStringProperty("word").notNull();
         entity = schema.addEntity("ScreenImage");
         // 5、设置数据库表中的字段（greenDao会自动根据实体类的属性来创建表字段，并赋予默认值）
         entity.addIdProperty().autoincrement();
-        entity.addStringProperty("image").notNull();
+        entity.addStringProperty("imagepath").notNull();
         //entity.addStringProperty("address");  升级时添加的新列名
     }
 }

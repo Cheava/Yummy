@@ -2,5 +2,6 @@
     <string name="app_name">Yummy</string>
     <string name="title_activity_lock_screen">LockScreenActivity</string>
     <string name="dummy_content">Hello World</string>
+    <string name="unusual">"感谢一起走过"</string>
     <string name="exit_content">轻触退出Yummy</string>
 </resources>

@@ -8,8 +8,11 @@ import android.os.Message;
 import android.util.Log;
 
 
+import com.orhanobut.logger.Logger;
+
 import org.apache.commons.lang3.RandomUtils;
 
+import hugo.weaving.DebugLog;
 import okhttp3.ResponseBody;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Call;
@@ -32,6 +35,7 @@ public class NetUtil {
 
     static ACache img_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_IMG);
     static ACache word_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_WORD);
+
 
     static public Word queryWord(String base_url, int id) {
         //1.创建Retrofit对象
@@ -74,6 +78,7 @@ public class NetUtil {
         return bitmap;
     }
 
+    @DebugLog
     static public void queryWordAsy(String base_url, int id) {
         //1.创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
@@ -88,6 +93,7 @@ public class NetUtil {
             public void onResponse(Call<Word> call, Response<Word> response) {
                 //请求成功
                 if (response.isSuccess()) {
+                    Logger.i("response is Success");
                     wordAsy = response.body();
                     Message message = new Message();
                     message.what = Constants.DOWN_WORD;
@@ -100,11 +106,12 @@ public class NetUtil {
             @Override
             public void onFailure(Call<Word> call, Throwable t) {
                 //请求失败
-                Log.e("retrofit", "onFailure_queryWordAsy");
+                Logger.e("retrofit", "onFailure_queryWordAsy");
             }
         });
     }
 
+    @DebugLog
     static public void queryImageAsy(String base_url, int id, String width, String height) {
         //1.创建Retrofit对象
         Retrofit retrofit = new Retrofit.Builder()
@@ -117,6 +124,7 @@ public class NetUtil {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccess()) {
+                    Logger.i("response is Success");
                     ResponseBody responseBody = response.body();
                     try {
                         byte date[] = responseBody.bytes();
@@ -161,9 +169,12 @@ public class NetUtil {
             switch (msg.what) {
                 case Constants.DOWN_WORD:
                     Word wordJson = (Word) msg.obj;
+                    BaseApplication.get("last_word_id", word_id);
+                    word_id = word_id + 1;
                     String word = wordJson.getTaici();
                     DataUtils.save(word_id, word);
-                    word_id = word_id + 1;
+                    BaseApplication.set("last_word_id", word_id);
+
                     if (word_id >= Constants.MAX_WORD) {
                         word_id = 0;
                         BaseApplication.sendLocalBroadcast(Constants.WORD_DOWNLOAD_DONE);
@@ -173,11 +184,12 @@ public class NetUtil {
                     break;
                 case Constants.DOWN_IMG:
                     Bitmap bmp = (Bitmap) msg.obj;
-                    DataUtils.save(img_id, bmp);
+                    BaseApplication.get("last_img_id", img_id);
                     img_id = img_id + 1;
+                    DataUtils.save(img_id, bmp);
+                    BaseApplication.set("last_img_id", img_id);
                     if (img_id >= Constants.MAX_WORD) {
                         BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOAD_DONE);
-
                     } else {
                         BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOADING);
                     }

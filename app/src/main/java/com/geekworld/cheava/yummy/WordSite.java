@@ -11,6 +11,6 @@ import retrofit2.http.Query;
  */
 
 public interface WordSite {
-    @GET("zhaiyan/taici/{id}")
+    @GET("zhaiyan/taici")
     Call<Word> getResult(@Query("id") String id);
 }

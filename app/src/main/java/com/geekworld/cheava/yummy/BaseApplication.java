@@ -16,6 +16,10 @@ import android.view.WindowManager;
 
 import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
+import com.geekworld.cheava.greendao.ScreenContentDao;
+import com.geekworld.cheava.greendao.ScreenImageDao;
+
+import de.greenrobot.dao.async.AsyncSession;
 
 
 /**
@@ -39,7 +43,15 @@ public class BaseApplication extends Application {
         return db;
     }
 
-    @Override 
+    public static ScreenContentDao getScreenContentDao() {
+        return getDaoSession().getScreenContentDao();
+    }
+
+    public static ScreenImageDao getScreenImageDao() {
+        return getDaoSession().getScreenImageDao();
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         _context = this;
