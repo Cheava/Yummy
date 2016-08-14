@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.geekworld.cheava.greendao.DaoMaster;
@@ -28,6 +29,10 @@ import de.greenrobot.dao.async.AsyncSession;
 public class BaseApplication extends Application {
     static private String PREF_NAME = "geekworld.pref";
     static private String KEY_CONNECTED = "connected";
+    static private String KEY_NEED_REFRESH_WORD = "need to refresh word";
+    static private String KEY_NEED_REFRESH_IMG = "need to refresh image";
+    static private String KEY_LAST_REFRESH_WORD = "last time refresh word";
+    static private String KEY_LAST_REFRESH_IMG = "last time refresh image";
     static BaseApplication _context;
     public static DaoMaster daoMaster;
     public static DaoSession daoSession;
@@ -89,12 +94,22 @@ public class BaseApplication extends Application {
         editor.apply();
     }
 
+    public static void set(String key, String value) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
     public static int get(String key, int defValue) {
         return getPreferences().getInt(key, defValue);
     }
 
     public static boolean get(String key, boolean defValue) {
         return getPreferences().getBoolean(key, defValue);
+    }
+
+    public static String get(String key, String defValue) {
+        return getPreferences().getString(key, defValue);
     }
 
     public static void saveDisplaySize(Context context) {
@@ -108,21 +123,48 @@ public class BaseApplication extends Application {
         editor.commit();
     }
 
-    public static int[] getDisplaySize() {
+    public static int getScreenWidth() {
+        return getPreferences().getInt("screen_width", 720);
+    }
+
+    public static int getScreenHeight() {
+        return getPreferences().getInt("screen_height", 1280);
+    }
+
+    public static int[] getDisplayY() {
         return new int[]{getPreferences().getInt("screen_width", 720),
                 getPreferences().getInt("screen_height", 1280)};
     }
 
     public static boolean isConnected() {
-        return get(KEY_CONNECTED, false);
+        ConnectivityManager cm = (ConnectivityManager) context().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            if (networkInfo != null
+                    && networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
     }
 
-    public static void setConnected(Boolean connected) {
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.putBoolean(KEY_CONNECTED, connected);
-        editor.commit();
+    public static boolean isNeedRefreshWord(){
+        return get(KEY_NEED_REFRESH_WORD, true);
     }
 
+    public static void setNeedRefreshWord(Boolean refreshWord) {
+        set(KEY_NEED_REFRESH_WORD,refreshWord);
+    }
+
+    public static boolean isNeedRefreshImg(){
+        return get(KEY_NEED_REFRESH_IMG, true);
+    }
+
+    public static void setNeedRefreshImg(Boolean refreshWord) {
+        set(KEY_NEED_REFRESH_IMG,refreshWord);
+    }
     public static void sendLocalBroadcast(String info) {
         Intent intent = new Intent(info);
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context());
@@ -133,6 +175,33 @@ public class BaseApplication extends Application {
         return Integer.toString(key)+".jpg"; //获得私有文件的目录
     }
     public static String getImgPath(int key){
-        return context().getFilesDir().getAbsolutePath()+getImgName(key); //获得私有文件的目录
+        return context().getFilesDir().getAbsolutePath()+"/"+getImgName(key); //获得私有文件的目录
+    }
+
+    public static void setLastRefreshWord(){
+        set(KEY_LAST_REFRESH_WORD,DateTimeUtil.getCurrentDateTimeString());
+    }
+
+    public static String getLastRefreshWord(){
+       return get(KEY_LAST_REFRESH_WORD,"2014-08-27 01:02:03");
+    }
+
+    public static void setLastRefreshImg(){
+        set(KEY_LAST_REFRESH_IMG,DateTimeUtil.getCurrentDateTimeString());
+    }
+
+    public static String getLastRefreshImg(){
+       return get(KEY_LAST_REFRESH_IMG,"2014-08-27 01:02:03");
+    }
+
+    public static String prettifyText(String text){
+        String result;
+        result = text.replace("，","，\r\n");
+        result = result.replace("。","。\r\n");
+        result = result.replace("！","！\r\n");
+        result = result.replace("？","？\r\n");
+        result = result.replace(" "," \r\n");
+        result = result.replace(";","; \r\n");
+        return result;
     }
 }

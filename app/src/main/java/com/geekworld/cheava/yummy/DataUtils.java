@@ -42,6 +42,20 @@ public class DataUtils {
         return (queryBuilder.buildCount().count() > 0);
     }
 
+    static public int getWordSum(){
+        QueryBuilder queryBuilder = contentDao.queryBuilder();
+        Long result = queryBuilder.buildCount().count();
+        Logger.i(Long.toString(result));
+        return result.intValue();
+    }
+
+    static public int getImgSum(){
+        QueryBuilder queryBuilder = imageDao.queryBuilder();
+        Long result = queryBuilder.buildCount().count();
+        Logger.i(Long.toString(result));
+        return result.intValue();
+    }
+
     @DebugLog
     static public void save(int key, String str) {
         try {

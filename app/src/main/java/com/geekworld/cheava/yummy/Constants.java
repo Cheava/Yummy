@@ -8,12 +8,13 @@ public class Constants {
     public static final int SHOW_IMG = 2;
     public static final int DOWN_WORD = 3;
     public static final int DOWN_IMG = 4;
-    public static final int MAX_CHAR = 28;
+    public static final int MAX_CHAR = 40;
+    public static final int REFRESH_DUTY = 7;
 
     public static final int MAX_IMG = 50;
     public static final int MAX_WORD = 100;
-    public static final int IMG_DUTY = 5;
-    public static final int WORD_DUTY = 5;
+    public static final int IMG_DUTY = 100;
+    public static final int WORD_DUTY = 60;
 
     public static final String IMG_DOWNLOAD_DONE = "com.geekworld.cheava.yummy.IMG_DOWNLOAD_DONE";
     public static final String WORD_DOWNLOAD_DONE = "com.geekworld.cheava.yummy.WORD_DOWNLOAD_DONE";

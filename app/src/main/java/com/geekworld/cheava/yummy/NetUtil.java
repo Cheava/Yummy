@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
@@ -11,6 +12,8 @@ import android.util.Log;
 import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang3.RandomUtils;
+
+import java.util.Random;
 
 import hugo.weaving.DebugLog;
 import okhttp3.ResponseBody;
@@ -28,54 +31,16 @@ public class NetUtil {
     static Word wordAsy;
     static Bitmap bitmap;
     static Word word;
-    static int word_id = 0;
-    static int img_id = 0;
+    static int last_net_word_id = 0;
+    static int last_net_img_id = 0;
     static String word_site = "https://api.acman.cn/";
     static String img_site = "https://unsplash.it/";
 
-    static ACache img_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_IMG);
-    static ACache word_Acache = ACache.get(BaseApplication.context(), 50, Constants.MAX_WORD);
-
-
-    static public Word queryWord(String base_url, int id) {
-        //1.创建Retrofit对象
-        Retrofit retrofit = new Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())//解析方法
-                .baseUrl(base_url)//主机地址
-                .build();
-
-        //2.创建访问API的请求
-        Call<Word> call = retrofit.create(WordSite.class).getResult(Integer.toString(id));
-        try {
-            word = call.execute().body();
-        } catch (Exception e) {
-            e.printStackTrace();
-            word = null;
+    static {
+        if(Looper.myLooper()==null){
+            Looper.prepare();
+            Looper.loop();
         }
-        return word;
-    }
-
-    static public Bitmap queryImage(String base_url, int id, String width, String height) {
-        //1.创建Retrofit对象
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(base_url)//主机地址
-                .build();
-
-        //2.创建访问API的请求
-        Call<ResponseBody> call = retrofit.create(ImageSite.class).getResult(width, height, Integer.toString(id));
-        try {
-            ResponseBody responseBody = call.execute().body();
-            try {
-                byte date[] = responseBody.bytes();
-                bitmap = BitmapFactory.decodeByteArray(date, 0, date.length);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            bitmap = null;
-        }
-        return bitmap;
     }
 
     @DebugLog
@@ -150,47 +115,48 @@ public class NetUtil {
     }
 
     static public void downloadWord() {
-        int rsi = RandomUtils.nextInt(0, 1000);
+        int rsi = new Random().nextInt(1000);
         int id = rsi % Constants.MAX_WORD;
         queryWordAsy(word_site, id);
     }
 
     static public void downloadImg() {
-        int rsi = RandomUtils.nextInt(0, 1000);
+        int rsi = new Random().nextInt(1000);
+        //int rsi = RandomUtils.nextInt(0, 1000);
         int id = rsi % Constants.MAX_IMG;
-        int[] screen_size = BaseApplication.getDisplaySize();
-        String width = Integer.toString(screen_size[0]);
-        String height = Integer.toString(screen_size[1]);
+        String width = Integer.toString(BaseApplication.getScreenWidth());
+        String height = Integer.toString(BaseApplication.getScreenHeight());
         queryImageAsy(img_site, id, width, height);
     }
 
-    static private Handler handler = new Handler() {
+
+    static private Handler handler = new Handler(Looper.myLooper()) {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case Constants.DOWN_WORD:
                     Word wordJson = (Word) msg.obj;
-                    BaseApplication.get("last_word_id", word_id);
-                    word_id = word_id + 1;
+                    BaseApplication.get("last_net_word_id", last_net_word_id);
+                    last_net_word_id = last_net_word_id + 1;
                     String word = wordJson.getTaici();
-                    DataUtils.save(word_id, word);
-                    BaseApplication.set("last_word_id", word_id);
+                    DataUtils.save(last_net_word_id, word);
+                    BaseApplication.set("last_net_word_id", last_net_word_id);
 
-                    if (word_id >= Constants.MAX_WORD) {
-                        word_id = 0;
+                    if (last_net_word_id >= Constants.MAX_WORD) {
+                        last_net_word_id = 0;
                         BaseApplication.sendLocalBroadcast(Constants.WORD_DOWNLOAD_DONE);
-                    } else {
+                    } else{
                         BaseApplication.sendLocalBroadcast(Constants.WORD_DOWNLOADING);
                     }
                     break;
                 case Constants.DOWN_IMG:
                     Bitmap bmp = (Bitmap) msg.obj;
-                    BaseApplication.get("last_img_id", img_id);
-                    img_id = img_id + 1;
-                    DataUtils.save(img_id, bmp);
-                    BaseApplication.set("last_img_id", img_id);
-                    if (img_id >= Constants.MAX_WORD) {
+                    BaseApplication.get("last_net_img_id", last_net_img_id);
+                    last_net_img_id = last_net_img_id + 1;
+                    DataUtils.save(last_net_img_id, bmp);
+                    BaseApplication.set("last_net_img_id", last_net_img_id);
+                    if (last_net_img_id >= Constants.MAX_IMG) {
                         BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOAD_DONE);
-                    } else {
+                    } else{
                         BaseApplication.sendLocalBroadcast(Constants.IMG_DOWNLOADING);
                     }
                     break;
@@ -198,105 +164,4 @@ public class NetUtil {
         }
     };
 
-    static public int getImgSum() {
-        return img_id;
-    }
-
-    static public int getWordSum() {
-        return word_id;
-    }
-/*
-    public String getRealImgSite(String id){
-        int [] screensize = BaseApplication.getDisplaySize();
-        String url = "https://unsplash.it/"+screensize[0]+"/"+screensize[1]+"/"+"?image="+id;
-        Log.d("getRealImgSite",url);
-        return url;
-    }
-
-    public void getImgFromNet(String id) {
-        // 开启线程来发起网络请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                try {
-                    img_site = getRealImgSite(id);
-                    URL url = new URL(img_site);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(10000);
-                    connection.setReadTimeout(10000);
-                    connection.setDoInput(true);
-                    int response_code = connection.getResponseCode();
-                    if(response_code == 200){
-                        InputStream in = connection.getInputStream();
-                        Bitmap bmp  = BitmapFactory.decodeStream(in);
-                        Message message = new Message();
-                        message.what = Constants.SHOW_IMG;
-                        // 将服务器返回的结果存放到Message中
-                        message.obj = bmp;
-                        handler.sendMessage(message);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
-                }
-            }
-        }).start();
-    }
-
-
-    public void getWordFromNet() {
-        // 开启线程来发起网络请求
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                try {
-                    URL url = new URL(word_site);
-                    connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    connection.setDoInput(true);
-                    InputStream in = connection.getInputStream();
-                    // 下面对获取到的输入流进行读取
-                    BufferedReader reader = new BufferedReader(
-                            new InputStreamReader(in));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    String result =  parseJSONWithJSONObject(response.toString());
-                    Message message = new Message();
-                    message.what = Constants.SHOW_WORD;
-                    // 将服务器返回的结果存放到Message中
-                    message.obj = result;
-                    Log.d("getWordFromNet",result);
-                    handler.sendMessage(message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
-                }
-            }
-        }).start();
-    }
-
-    private String  parseJSONWithJSONObject(String jsonData) {
-        try {
-            JSONObject jsonObject  = new JSONObject(jsonData);
-            return jsonObject.getString("taici");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-*/
 }

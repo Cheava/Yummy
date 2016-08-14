@@ -1,5 +1,6 @@
 package com.geekworld.cheava.yummy;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,13 +12,21 @@ import android.os.Message;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
 
+import org.apache.commons.lang3.RandomUtils;
+
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,26 +45,29 @@ public class LockScreenActivity extends SwipeBackActivity{
             switch (msg.what) {
                 case Constants.SHOW_WORD:
                     String response = (String) msg.obj;
-                    if (response == null) return;
+                    if (response == null) response = getString(R.string.dummy_content);
                     if (response.length() > Constants.MAX_CHAR) return;
                     // 更新文字
-                    String text = prettifyText(response);
+                    String text = BaseApplication.prettifyText(response);
                     content.setText(text);
                     break;
                 case Constants.SHOW_IMG:
                     String path = (String) msg.obj;
-                    if (path == null) return;
-                    // 更新壁纸
-                    background.setImageBitmap(BitmapFactory.decodeFile(path));
+                    if (path == null) {
+                        background.setImageResource(R.drawable.background);
+                    }else{// 更新壁纸
+                        background.setImageBitmap(BitmapFactory.decodeFile(path));
+                    }
                     break;
             }
         }
     };
 
-    Timer timer = new Timer();
+    private Timer timer = new Timer();
     public static final String TAG = "LockScreenActivity";
-    Context context;
-    ContentProvider contentProvider = new ContentProvider(handler);
+    private Context context;
+    private Activity activity = this;
+    private ContentProvider contentProvider = new ContentProvider(handler);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,16 +82,23 @@ public class LockScreenActivity extends SwipeBackActivity{
         setContentView(R.layout.activity_lock_screen);
         BaseApplication.saveDisplaySize(context);
         ButterKnife.bind(this);
-
-        background.setImageResource(R.drawable.new_bg);
-
+        background.setImageResource(R.drawable.background);
+        background.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGesture.onTouchEvent(event);
+            }
+        });
         if (savedInstanceState != null) {
             //content.setText(savedInstanceState.getString("data_key"));
         }
 
-        timer.schedule(imgTask, 0, Constants.IMG_DUTY * 1000);
-        timer.schedule(wordTask, 0, Constants.WORD_DUTY * 1000);
+        contentProvider.updateWord();
+        contentProvider.updateImage();
+        timer.schedule(imgTask, 0, ((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
+        timer.schedule(wordTask, 0,((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
     }
+
 
 
 
@@ -95,15 +114,16 @@ public class LockScreenActivity extends SwipeBackActivity{
         }
     };
 
-    private String prettifyText(String text){
-        String result;
-        result = text.replace("，","，\r\n");
-        result = result.replace("。","。\r\n");
-        result = result.replace("！","！\r\n");
-        result = result.replace("？","？\r\n");
-        result = result.replace(" "," \r\n");
-        return result;
-    }
+
+
+    private GestureDetector mGesture = new GestureDetector(context,new GestureDetector.SimpleOnGestureListener(){
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Logger.i("双击");
+            ImageUtil.screenShot(activity);
+            return true;
+        }
+    });
 
     @Override
     public void onBackPressed() {
@@ -118,6 +138,8 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Override
     protected void onResume() {
         super.onResume();
+        contentProvider.updateWord();
+        contentProvider.updateImage();
         Log.d(TAG, "onResume");
     }
 
@@ -135,11 +157,11 @@ public class LockScreenActivity extends SwipeBackActivity{
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (timer != null) {
             timer.cancel( );
             timer = null;
         }
-        super.onDestroy();
         Log.d(TAG, "onDestroy");
     }
 
@@ -153,6 +175,6 @@ public class LockScreenActivity extends SwipeBackActivity{
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("last_word", (String) content.getText());
-        outState.putString("last_image_path", (String) content.getText());
+        //outState.putString("last_image_path", (String) content.getText());
     }
 }

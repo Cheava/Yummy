@@ -13,6 +13,6 @@ import retrofit2.http.Query;
  */
 
 public interface ImageSite {
-    @GET("{screen_width}/{screen_height}/{image}")
+    @GET("{screen_width}/{screen_height}/")
     Call<ResponseBody> getResult(@Path("screen_width") String screen_width, @Path("screen_height") String screen_height, @Query("image") String id);
 }

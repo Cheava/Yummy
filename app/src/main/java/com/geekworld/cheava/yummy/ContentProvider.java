@@ -14,6 +14,7 @@ import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.SurfaceHolder;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.json.JSONObject;
@@ -24,6 +25,9 @@ import java.io.InputStreamReader;
 import java.io.StreamCorruptedException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Random;
 
 import hugo.weaving.DebugLog;
 
@@ -34,34 +38,54 @@ public class ContentProvider {
     ACache acache = ACache.get(BaseApplication.context());
     Context context = BaseApplication.context();
     Handler handler;
+    static int show_word_id = 0;
+    static int show_img_id = 0;
+    static private String KEY_SHOW_WORD_ID = "last_show_word_id";
+    static private String KEY_SHOW_IMG_ID = "last_show_image_id";
+    static private HashSet<Integer> wordHashSet=new HashSet<Integer>();
+    static private HashSet<Integer> imgHashSet = new HashSet<Integer>();
+
 
     public ContentProvider(Handler handler) {
         this.handler = handler;
     }
 
     public void updateImage() {
-        int id = RandomUtils.nextInt(0, NetUtil.getImgSum());
-        sendMessage(Constants.SHOW_IMG, DataUtils.loadImage(id));
+        int sum = DataUtils.getImgSum();
+        if(sum<=0){
+            //暂无内容，一般是安装后第一次运行程序
+            BaseApplication.setNeedRefreshImg(true);
+        }else if(sum==1){
+            show_img_id = 1;
+            sendMessage(Constants.SHOW_IMG, DataUtils.loadImage(show_img_id));
+        }else{
+            show_img_id = getImgId(sum);
+            sendMessage(Constants.SHOW_IMG, DataUtils.loadImage(show_img_id));
+        }
     }
 
     public void updateWord() {
-        int id = RandomUtils.nextInt(0, NetUtil.getWordSum());
-        sendMessage(Constants.SHOW_WORD, DataUtils.loadWord(id));
-    }
-
-    BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        /**
-         * @param context
-         * @param intent
-         */
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            sendMessage(Constants.SHOW_IMG, BitmapFactory.decodeResource(context.getResources(), R.drawable.unusual));
-            sendMessage(Constants.SHOW_WORD, R.string.unusual);
-            Log.d("ContentProvider", "onReceive");
+        int sum = DataUtils.getWordSum();
+        if(sum<=0){
+            //暂无内容，一般是安装后第一次运行程序
+            BaseApplication.setNeedRefreshWord(true);
+        }else if(sum==1){
+            show_word_id = 1;
+            String result = DataUtils.loadWord(show_word_id);
+            if("ID不存在".equals(result)){
+                result = context.getString(R.string.dummy_content);
+            }
+            sendMessage(Constants.SHOW_WORD,result);
+        }else{
+            show_word_id = getWordId(sum);
+            String result = DataUtils.loadWord(show_word_id);
+            if("ID不存在".equals(result)){
+                show_word_id = show_word_id+1;
+                result =  DataUtils.loadWord(show_word_id);
+            }
+            sendMessage(Constants.SHOW_WORD, result);
         }
-    };
+    }
 
     @DebugLog
     public void sendMessage(int what, Object obj) {
@@ -74,5 +98,35 @@ public class ContentProvider {
 
         handler.sendMessage(message);
     }
+
+    public int getWordId(int sum){
+        int retry = 0;
+        int random = 1;
+        for(;retry<3;retry++)
+        {
+            random = new Random().nextInt(sum);
+            if(!wordHashSet.contains(random)){
+                wordHashSet.add(random);
+                break;
+            }
+        }
+        if(retry>=3)wordHashSet.clear();
+        return random;
+    }
+    public int getImgId(int sum){
+        int retry = 0;
+        int random = 1;
+        for(;retry<3;retry++)
+        {
+            random = new Random().nextInt(sum);
+            if(!imgHashSet.contains(random)){
+                imgHashSet.add(random);
+                break;
+            }
+        }
+        if(retry>=3)imgHashSet.clear();
+        return random;
+    }
+
 
 }

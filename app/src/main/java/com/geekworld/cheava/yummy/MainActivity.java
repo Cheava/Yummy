@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         exit.setOnClickListener(this);
         service = new Intent(this, LockService.class);
         startService(service);
-        AlarmManagerUtil.sendAlarmBroadcast(BaseApplication.context(), 1, AlarmManager.RTC_WAKEUP, DateTimeUtil.getDifMillis("2016-08-08 19:22:00", DateTimeUtil.getCurrentDateTimeString()), ContentProvider.class);
+        AlarmManagerUtil.sendAlarmBroadcast(BaseApplication.context(), 1, AlarmManager.RTC_WAKEUP, DateTimeUtil.getDifMillis("2016-08-14 15:17:20", DateTimeUtil.getCurrentDateTimeString()), SpacialDay.class);
     }
 
     @Override
