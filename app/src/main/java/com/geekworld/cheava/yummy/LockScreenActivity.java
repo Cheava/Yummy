@@ -120,7 +120,9 @@ public class LockScreenActivity extends SwipeBackActivity{
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Logger.i("双击");
-            ImageUtil.screenShot(activity);
+            String img = ImageUtil.screenShot(activity);
+            ShareDialog shareDialog = ShareDialog.getInstance(activity);
+            shareDialog.showDialog(img);
             return true;
         }
     });

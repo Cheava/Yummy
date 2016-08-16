@@ -39,4 +39,8 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
     compile 'de.greenrobot:greendao:2.1.0'
     compile 'com.orhanobut:logger:1.15'
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0@aar'
+    compile 'cn.pedant.sweetalert:library:1.3'
+    compile 'com.tiancaicc.springfloatingactionmenu:library:0.0.2'
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -25,7 +26,7 @@ public class ImageUtil {
         }
     });
 
-    public static void screenShot(Activity activity){
+    public static String screenShot(Activity activity){
         //生成相同大小的图片
 /*        Bitmap tempBmp = Bitmap.createBitmap(
                 BaseApplication.getScreenWidth(),
@@ -42,6 +43,7 @@ public class ImageUtil {
         Uri uri = Uri.parse(str);
         screenshotPath = getFilePathByContentResolver(BaseApplication.context(),uri);
         msc.connect();
+        return screenshotPath;
     }
 
     /**
@@ -69,6 +71,24 @@ public class ImageUtil {
             c.close();
         }
         return filePath;
+    }
+
+    public static Bitmap getThumb(String path,int scale){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+
+        options.inSampleSize = scale;
+        options.inJustDecodeBounds = false;
+        options.inDither=false;    /*不进行图片抖动处理*/
+        options.inPreferredConfig=null;  /*设置让解码器以最佳方式解码*/
+        /* 下面两个字段需要组合使用 */
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+
+        Bitmap bmp = BitmapFactory.decodeFile(path, options);
+        return bmp;
     }
 
 }
