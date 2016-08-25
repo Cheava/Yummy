@@ -19,14 +19,15 @@
 
     <TextView
         android:id="@+id/fullscreen_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom|center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left|bottom"
         android:keepScreenOn="true"
         android:text="@string/dummy_content"
         android:textColor="@color/background_material_light"
         android:textSize="20sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_gravity="left|bottom" />
 
 
     <!-- This FrameLayout insets its children based on system windows using

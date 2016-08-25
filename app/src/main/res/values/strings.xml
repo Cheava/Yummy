@@ -4,4 +4,6 @@
     <string name="dummy_content">Hello World</string>
     <string name="unusual">"感谢一起走过"</string>
     <string name="exit_content">轻触退出Yummy</string>
+    <string name="special_time">"Special Time"</string>
+    <string name="special_day">"Special Day"</string>
 </resources>

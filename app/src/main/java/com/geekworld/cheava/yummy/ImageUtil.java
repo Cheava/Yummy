@@ -10,6 +10,10 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.View;
 
+import com.orhanobut.logger.Logger;
+
+import hugo.weaving.DebugLog;
+
 /**
  * Created by Cheava on 2016/8/14 0014.
  */
@@ -26,6 +30,7 @@ public class ImageUtil {
         }
     });
 
+    @DebugLog
     public static String screenShot(Activity activity){
         //生成相同大小的图片
 /*        Bitmap tempBmp = Bitmap.createBitmap(
@@ -43,6 +48,7 @@ public class ImageUtil {
         Uri uri = Uri.parse(str);
         screenshotPath = getFilePathByContentResolver(BaseApplication.context(),uri);
         msc.connect();
+        view.destroyDrawingCache();
         return screenshotPath;
     }
 

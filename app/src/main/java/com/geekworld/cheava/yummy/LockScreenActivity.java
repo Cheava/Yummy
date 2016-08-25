@@ -66,7 +66,7 @@ public class LockScreenActivity extends SwipeBackActivity{
     private Timer timer = new Timer();
     public static final String TAG = "LockScreenActivity";
     private Context context;
-    private Activity activity = this;
+    private final Activity activity = this;
     private ContentProvider contentProvider = new ContentProvider(handler);
 
     @Override
@@ -89,6 +89,13 @@ public class LockScreenActivity extends SwipeBackActivity{
                 return mGesture.onTouchEvent(event);
             }
         });
+        Intent intent = getIntent();
+        if(intent!=null){
+            if(intent.getBooleanExtra("isSpecialDay",false)){
+                content.setText(R.string.unusual);
+                background.setImageResource(R.drawable.unusual);
+            }
+        }
         if (savedInstanceState != null) {
             //content.setText(savedInstanceState.getString("data_key"));
         }
@@ -120,8 +127,8 @@ public class LockScreenActivity extends SwipeBackActivity{
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Logger.i("双击");
-            String img = ImageUtil.screenShot(activity);
-            ShareDialog shareDialog = ShareDialog.getInstance(activity);
+            String img = ImageUtil.screenShot(LockScreenActivity.this);
+            ShareDialog shareDialog = new ShareDialog(LockScreenActivity.this);
             shareDialog.showDialog(img);
             return true;
         }

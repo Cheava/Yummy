@@ -18,4 +18,16 @@
         android:gravity="center"
         android:text="@string/exit_content" />
 
+    <Button
+        android:id="@+id/btn_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置闹钟" />
+
+    <Button
+        android:id="@+id/btn_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置日期" />
+
 </LinearLayout>

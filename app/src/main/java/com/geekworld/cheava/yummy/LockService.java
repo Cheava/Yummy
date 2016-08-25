@@ -76,6 +76,7 @@ public class LockService extends Service {
                 Log.d("LockService", "收到锁屏广播");
                 Intent lockscreen = new Intent(LockService.this, LockScreenActivity.class);
                 lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                lockscreen.putExtra("isSpecialDay",BaseApplication.isSpecialDay());
                 startActivity(lockscreen);
             }
             // 这个监听wifi的连接状态即是否连上了一个有效无线路由，当上边广播的状态是WifiManager.WIFI_STATE_DISABLING，和WIFI_STATE_DISABLED的时候，根本不会接到这个广播。

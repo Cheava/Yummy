@@ -19,6 +19,9 @@ import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
 import com.geekworld.cheava.greendao.ScreenContentDao;
 import com.geekworld.cheava.greendao.ScreenImageDao;
+import com.umeng.socialize.PlatformConfig;
+
+import java.util.Date;
 
 import de.greenrobot.dao.async.AsyncSession;
 
@@ -68,6 +71,14 @@ public class BaseApplication extends Application {
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
+
+
+        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
+        //微信 appid appsecret
+        PlatformConfig.setSinaWeibo("3921700954","04b48b094faeb16683c32669824ebdad");
+        //新浪微博 appkey appsecret
+        PlatformConfig.setQQZone("1105543981", "ywjkSrKO0MzkDKzN");
+        // qq qzone appid appkey
     }
 
     public static synchronized BaseApplication context() {
@@ -94,6 +105,12 @@ public class BaseApplication extends Application {
         editor.apply();
     }
 
+    public static void set(String key, long value) {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
     public static void set(String key, String value) {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(key, value);
@@ -110,6 +127,10 @@ public class BaseApplication extends Application {
 
     public static String get(String key, String defValue) {
         return getPreferences().getString(key, defValue);
+    }
+
+    public static long get(String key, long defValue) {
+        return getPreferences().getLong(key, defValue);
     }
 
     public static void saveDisplaySize(Context context) {
@@ -203,5 +224,11 @@ public class BaseApplication extends Application {
         result = result.replace(" "," \r\n");
         result = result.replace(";","; \r\n");
         return result;
+    }
+
+    static public boolean isSpecialDay(){
+        String now = DateTimeUtil.getCurrentDateTimeString();
+        String record =  get(context().getResources().getString(R.string.special_day),null);
+        return (DateTimeUtil.getDayNumDif(record,now)==0);
     }
 }
