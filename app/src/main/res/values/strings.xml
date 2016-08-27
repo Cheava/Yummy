@@ -2,8 +2,9 @@
     <string name="app_name">Yummy</string>
     <string name="title_activity_lock_screen">LockScreenActivity</string>
     <string name="dummy_content">Hello World</string>
-    <string name="unusual">"感谢一起走过"</string>
-    <string name="exit_content">轻触退出Yummy</string>
+    <string name="unusual">"感谢一起走过 \n王先生他说他爱你 \n想你三百六十五天"</string>
+    <string name="special_day">"2016-08-27 00:00:00"</string>
+    <string name="exit_content">轻触取消Yummy锁屏</string>
     <string name="special_time">"Special Time"</string>
-    <string name="special_day">"Special Day"</string>
+    <!--<string name="special_day">"Special Day"</string>-->
 </resources>

@@ -22,8 +22,10 @@ import com.geekworld.cheava.greendao.ScreenImageDao;
 import com.umeng.socialize.PlatformConfig;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 import de.greenrobot.dao.async.AsyncSession;
+import hugo.weaving.DebugLog;
 
 
 /**
@@ -226,9 +228,14 @@ public class BaseApplication extends Application {
         return result;
     }
 
+    @DebugLog
     static public boolean isSpecialDay(){
         String now = DateTimeUtil.getCurrentDateTimeString();
-        String record =  get(context().getResources().getString(R.string.special_day),null);
-        return (DateTimeUtil.getDayNumDif(record,now)==0);
+        com.orhanobut.logger.Logger.i(now);
+        //String record =  get(context().getResources().getString(R.string.special_day),null);
+        String record =  context().getResources().getString(R.string.special_day);
+        com.orhanobut.logger.Logger.i(record);
+        long result = DateTimeUtil.getDifMillis(now,record);
+        return (result>0 && result<24*3600*1000);
     }
 }

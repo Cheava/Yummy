@@ -89,21 +89,26 @@ public class LockScreenActivity extends SwipeBackActivity{
                 return mGesture.onTouchEvent(event);
             }
         });
+        long delay = 0;
         Intent intent = getIntent();
         if(intent!=null){
             if(intent.getBooleanExtra("isSpecialDay",false)){
                 content.setText(R.string.unusual);
-                background.setImageResource(R.drawable.unusual);
+                //content.setTextColor( getResources().getColor(R.color.blue_btn_bg_color));
+                background.setImageResource(R.drawable.love);
+                delay = 10*1000;
             }
+        }else{
+            contentProvider.updateWord();
+            contentProvider.updateImage();
         }
         if (savedInstanceState != null) {
             //content.setText(savedInstanceState.getString("data_key"));
         }
 
-        contentProvider.updateWord();
-        contentProvider.updateImage();
-        timer.schedule(imgTask, 0, ((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
-        timer.schedule(wordTask, 0,((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
+
+        timer.schedule(imgTask, delay, ((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
+        timer.schedule(wordTask, delay,((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
     }
 
 
@@ -147,8 +152,8 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        contentProvider.updateWord();
-        contentProvider.updateImage();
+        //contentProvider.updateWord();
+        //contentProvider.updateImage();
         Log.d(TAG, "onResume");
     }
 

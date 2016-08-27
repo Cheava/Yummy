@@ -10,14 +10,6 @@
     tools:context="com.geekworld.cheava.yummy.MainActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/exit_content" />
-
     <Button
         android:id="@+id/btn_time"
         android:layout_width="wrap_content"
@@ -29,5 +21,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="设置日期" />
+
+    <TextView
+        android:id="@+id/exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:gravity="center"
+        android:text="@string/exit_content"
+        android:textSize="35dp" />
 
 </LinearLayout>

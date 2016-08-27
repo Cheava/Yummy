@@ -31,25 +31,33 @@ public class NaviHelper extends SpringFloatingActionMenu {
     }
 
     /* 1:懒汉式，静态工程方法，创建实例 */
-    public static NaviHelper getInstance(Activity activity) {
-        if (instance == null) {
-            instance = new NaviHelper(activity);
+    public static NaviHelper getInstance(Activity activity1) {
+        if (instance == null || activity != activity1)
+        {
+            instance = new NaviHelper(activity1);
+            activity = activity1;
+
+            //if(fab==null){
+                fab = createFAB(activity);
+            //}
+            //if(menu==null){
+                menu = ceateFabMenu(activity,fab);
+            //}
         }
-        instance.activity = activity;
         return instance;
     }
 
 
-    View.OnClickListener imgclick = new View.OnClickListener() {
+    static View.OnClickListener imgclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(BaseApplication.context(),"ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
+            Toast.makeText(BaseApplication.context(),"爱你哦~ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
             //UMShare umShare = new UMShare(activity);
             //umShare.share(SHARE_MEDIA.QQ,"Test", BitmapFactory.decodeFile(path));
         }
     };
 
-    private FloatingActionButton createFAB(Context context){
+    static private FloatingActionButton createFAB(Context context){
         //必须手动创建FAB, 并设置属性
         FloatingActionButton fab = new FloatingActionButton(context);
         fab.setType(FloatingActionButton.TYPE_NORMAL);
@@ -61,7 +69,7 @@ public class NaviHelper extends SpringFloatingActionMenu {
         return fab;
     }
 
-    private SpringFloatingActionMenu ceateFabMenu(Context context,FloatingActionButton fab){
+    static private SpringFloatingActionMenu ceateFabMenu(Context context,FloatingActionButton fab){
         final FloatingActionButton mfab = fab;
         final SpringFloatingActionMenu menu = new SpringFloatingActionMenu.Builder(context)
                 .fab(fab)
@@ -97,12 +105,7 @@ public class NaviHelper extends SpringFloatingActionMenu {
 
 
     public void share(String path){
-        if(fab==null){
-            fab = createFAB(activity);
-        }
-        if(menu==null){
-            menu = ceateFabMenu(activity,fab);
-        }
+
 
 
         if(menu.isMenuOpen()){
@@ -110,9 +113,7 @@ public class NaviHelper extends SpringFloatingActionMenu {
         }
         menu.showMenu();
 
-        if(path!=null){
-            this.path = path;
-        }
+
     }
 
 }
