@@ -17,20 +17,27 @@
         android:clickable="true" />
 
 
-    <TextView
+    <com.geekworld.cheava.yummy.StrokeTextView
         android:id="@+id/fullscreen_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="left|bottom"
         android:keepScreenOn="true"
         android:text="@string/dummy_content"
-        android:textColor="@color/background_material_light"
+        android:textColor="@color/primary_material_light"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_gravity="left|bottom" />
+        android:layout_gravity="left|bottom"
+        android:theme="@android:style/Widget.Holo.Light.TextView"
+        android:shadowColor="@color/primary_dark_material_dark" />
 
-
-    <!-- This FrameLayout insets its children based on system windows using
-         android:fitsSystemWindows. -->
+    <com.geekworld.cheava.yummy.StrokeTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/time"
+        android:textColor="@color/primary_material_light"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_gravity="right|top" />
 
 </FrameLayout>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +49,11 @@ public class ContentProvider {
 
     public ContentProvider(Handler handler) {
         this.handler = handler;
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        context.registerReceiver(receiver, intentFilter);
     }
 
     public void updateImage() {
@@ -87,6 +93,10 @@ public class ContentProvider {
         }
     }
 
+    public void updateTime(){
+        sendMessage(Constants.SHOW_TIME ,DateTimeUtil.getCurrentTimeString());
+    }
+
     @DebugLog
     public void sendMessage(int what, Object obj) {
         //Handler handler = new Handler(Looper.getMainLooper());
@@ -98,6 +108,15 @@ public class ContentProvider {
 
         handler.sendMessage(message);
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            updateTime();
+        }
+    };
 
     public int getWordId(int sum){
         int retry = 0;
@@ -128,5 +147,8 @@ public class ContentProvider {
         return random;
     }
 
-
+    protected void finalize()
+    {
+        context.unregisterReceiver(receiver);
+    }
 }

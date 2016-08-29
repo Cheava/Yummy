@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import java.util.Calendar;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,6 +40,7 @@ import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 public class LockScreenActivity extends SwipeBackActivity{
     @Bind(R.id.fullscreen_content)TextView content;
     @Bind(R.id.background)ImageView background;
+    @Bind(R.id.time)StrokeTextView time;
 
     private Handler handler = new Handler() {
         @DebugLog
@@ -59,9 +62,15 @@ public class LockScreenActivity extends SwipeBackActivity{
                         background.setImageBitmap(BitmapFactory.decodeFile(path));
                     }
                     break;
+
+                case Constants.SHOW_TIME:
+                    String display_time = (String) msg.obj;
+                    time.setText(display_time);
+                    break;
             }
         }
     };
+
 
     private Timer timer = new Timer();
     public static final String TAG = "LockScreenActivity";
@@ -89,6 +98,7 @@ public class LockScreenActivity extends SwipeBackActivity{
                 return mGesture.onTouchEvent(event);
             }
         });
+        contentProvider.updateTime();
         long delay = 0;
         Intent intent = getIntent();
         if(intent!=null){

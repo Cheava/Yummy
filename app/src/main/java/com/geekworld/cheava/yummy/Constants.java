@@ -6,8 +6,9 @@ package com.geekworld.cheava.yummy;
 public class Constants {
     public static final int SHOW_WORD = 1;
     public static final int SHOW_IMG = 2;
-    public static final int DOWN_WORD = 3;
-    public static final int DOWN_IMG = 4;
+    public static final int SHOW_TIME = 3;
+    public static final int DOWN_WORD = 11;
+    public static final int DOWN_IMG = 12;
     public static final int MAX_CHAR = 40;
     public static final int REFRESH_DUTY = 7;
 
