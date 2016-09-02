@@ -105,7 +105,7 @@ public class LockScreenActivity extends SwipeBackActivity{
             if(intent.getBooleanExtra("isSpecialDay",false)){
                 content.setText(R.string.unusual);
                 //content.setTextColor( getResources().getColor(R.color.blue_btn_bg_color));
-                background.setImageResource(R.drawable.love);
+                background.setImageResource(R.drawable.unusual);
                 delay = 10*1000;
             }
         }else{
@@ -117,8 +117,8 @@ public class LockScreenActivity extends SwipeBackActivity{
         }
 
 
-        timer.schedule(imgTask, delay, ((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
-        timer.schedule(wordTask, delay,((new Random().nextInt(Constants.IMG_DUTY))+15)*1000);
+        timer.schedule(imgTask, delay, ((RandomUtil.Int(Constants.IMG_DUTY)) + Constants.SWITCH_TIME) * 1000);
+        timer.schedule(wordTask, delay, ((RandomUtil.Int(Constants.WORD_DUTY)) + Constants.SWITCH_TIME) * 1000);
     }
 
 

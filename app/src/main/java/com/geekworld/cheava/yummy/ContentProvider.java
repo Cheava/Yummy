@@ -118,12 +118,12 @@ public class ContentProvider {
         }
     };
 
-    public int getWordId(int sum){
+    static public int getWordId(int sum) {
         int retry = 0;
         int random = 1;
         for(;retry<3;retry++)
         {
-            random = new Random().nextInt(sum);
+            random = new RandomUtil().Int(sum);
             if(!wordHashSet.contains(random)){
                 wordHashSet.add(random);
                 break;
@@ -132,12 +132,13 @@ public class ContentProvider {
         if(retry>=3)wordHashSet.clear();
         return random;
     }
-    public int getImgId(int sum){
+
+    static public int getImgId(int sum) {
         int retry = 0;
         int random = 1;
         for(;retry<3;retry++)
         {
-            random = new Random().nextInt(sum);
+            random = RandomUtil.Int(sum);
             if(!imgHashSet.contains(random)){
                 imgHashSet.add(random);
                 break;

@@ -31,4 +31,18 @@
         android:text="@string/exit_content"
         android:textSize="35dp" />
 
+    <Button
+        android:id="@+id/test"
+        android:text="产生随机数"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/text_random"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>

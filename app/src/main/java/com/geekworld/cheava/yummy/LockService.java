@@ -29,6 +29,7 @@ public class LockService extends Service {
     public void onCreate() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         // 注册广播监听器
         registerReceiver(receiver, filter);
@@ -73,12 +74,20 @@ public class LockService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
+                Log.d("LockService", "收到开屏广播");
+                Intent lockscreen = new Intent(LockService.this, LockScreenActivity.class);
+                lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                lockscreen.putExtra("isSpecialDay", BaseApplication.isSpecialDay());
+                startActivity(lockscreen);
+            }
+            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
                 Log.d("LockService", "收到锁屏广播");
                 Intent lockscreen = new Intent(LockService.this, LockScreenActivity.class);
                 lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 lockscreen.putExtra("isSpecialDay",BaseApplication.isSpecialDay());
                 startActivity(lockscreen);
             }
+
             // 这个监听wifi的连接状态即是否连上了一个有效无线路由，当上边广播的状态是WifiManager.WIFI_STATE_DISABLING，和WIFI_STATE_DISABLED的时候，根本不会接到这个广播。
             if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
                 Parcelable parcelableExtra = intent

@@ -10,8 +10,8 @@ public class Constants {
     public static final int DOWN_WORD = 11;
     public static final int DOWN_IMG = 12;
     public static final int MAX_CHAR = 40;
-    public static final int REFRESH_DUTY = 7;
-
+    public static final int REFRESH_DUTY = 3;
+    public static final int SWITCH_TIME = 10;
     public static final int MAX_IMG = 50;
     public static final int MAX_WORD = 100;
     public static final int IMG_DUTY = 100;

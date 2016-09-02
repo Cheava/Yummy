@@ -3,6 +3,7 @@ package com.geekworld.cheava.yummy;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,7 +13,10 @@ import com.melnykov.fab.FloatingActionButton;
 import com.orhanobut.logger.Logger;
 import com.tiancaicc.springfloatingactionmenu.OnMenuActionListener;
 import com.tiancaicc.springfloatingactionmenu.SpringFloatingActionMenu;
+import com.umeng.socialize.ShareAction;
+import com.umeng.socialize.UMShareListener;
 import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.utils.ShareBoardlistener;
 
 /**
@@ -51,9 +55,16 @@ public class NaviHelper extends SpringFloatingActionMenu {
     static View.OnClickListener imgclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Toast.makeText(BaseApplication.context(),"爱你哦~ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
-            //UMShare umShare = new UMShare(activity);
-            //umShare.share(SHARE_MEDIA.QQ,"Test", BitmapFactory.decodeFile(path));
+            //Toast.makeText(BaseApplication.context(),"爱你哦~ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
+            menu.hideMenu();
+            UMImage umImage = new UMImage(activity, R.drawable.ic_launcher);
+            new ShareAction(activity)
+                    .setPlatform(SHARE_MEDIA.WEIXIN)
+                    .setCallback(umShareListener)
+                    .withText("Hello 微信")
+                    .withMedia(umImage)
+                    .share();
+
         }
     };
 
@@ -105,15 +116,39 @@ public class NaviHelper extends SpringFloatingActionMenu {
 
 
     public void share(String path){
-
-
+        this.path = path;
 
         if(menu.isMenuOpen()){
             menu.hideMenu();
         }
         menu.showMenu();
 
-
     }
+
+    static private UMShareListener umShareListener = new UMShareListener() {
+        @Override
+        public void onResult(SHARE_MEDIA platform) {
+            Log.d("plat", "platform" + platform);
+            if (platform.name().equals("WEIXIN_FAVORITE")) {
+                Toast.makeText(activity, platform + " 收藏成功啦", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(activity, platform + " 分享成功啦", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onError(SHARE_MEDIA platform, Throwable t) {
+            Toast.makeText(activity, platform + " 分享失败啦", Toast.LENGTH_SHORT).show();
+            if (t != null) {
+                Log.d("throw", "throw:" + t.getMessage());
+            }
+        }
+
+        @Override
+        public void onCancel(SHARE_MEDIA platform) {
+            Toast.makeText(activity, platform + " 分享取消了", Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
 }

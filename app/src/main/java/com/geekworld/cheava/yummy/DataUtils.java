@@ -45,14 +45,14 @@ public class DataUtils {
     static public int getWordSum(){
         QueryBuilder queryBuilder = contentDao.queryBuilder();
         Long result = queryBuilder.buildCount().count();
-        Logger.i(Long.toString(result));
+        //Logger.i(Long.toString(result));
         return result.intValue();
     }
 
     static public int getImgSum(){
         QueryBuilder queryBuilder = imageDao.queryBuilder();
         Long result = queryBuilder.buildCount().count();
-        Logger.i(Long.toString(result));
+        //Logger.i(Long.toString(result));
         return result.intValue();
     }
 

@@ -72,7 +72,7 @@
         </meta-data>
 
         <activity
-            android:name="com.umeng.example.wxapi.WXEntryActivity"
+            android:name="com.geekworld.cheava.yummy.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -96,7 +96,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name=".WBShareActivity"
+            android:name="com.geekworld.cheava.yummy.WBShareActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -111,12 +111,6 @@
             android:windowSoftInputMode="adjustResize"
             android:exported="false" >
         </activity>
-
-        <service
-            android:name="com.sina.weibo.sdk.net.DownloadService"
-            android:exported="false">
-
-        </service>
 
     </application>
 

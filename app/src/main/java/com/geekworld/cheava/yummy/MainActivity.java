@@ -26,6 +26,10 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     @Bind(R.id.exit)TextView exit;
     @Bind(R.id.btn_time)Button btn_time;
     @Bind(R.id.btn_day)Button btn_day;
+    @Bind(R.id.test)
+    Button btn_test;
+    @Bind(R.id.text_random)
+    TextView text_random;
     Intent service;
 
     @Override
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         getSupportActionBar().hide();
         ButterKnife.bind(this);
         exit.setOnClickListener(this);
+        btn_test.setOnClickListener(this);
         btn_time.setOnClickListener(this);
         btn_day.setOnClickListener(this);
         btn_day.setVisibility(View.INVISIBLE);
@@ -106,6 +111,9 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                             }
                         }, currentDay.get(Calendar.YEAR), currentDay.get(Calendar.MONTH), currentDay
                         .get(Calendar.DAY_OF_MONTH)).show();
+                break;
+            case R.id.test:
+                text_random.append(ContentProvider.getImgId(1000) + "-");
                 break;
             default:
                 break;
