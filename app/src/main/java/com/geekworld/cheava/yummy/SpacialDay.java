@@ -16,7 +16,7 @@ public class SpacialDay extends LockScreenActivity {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            background.setImageResource(R.drawable.unusual);
+            background.setImageResource(R.mipmap.unusual);
             content.setText(R.string.unusual);
             Logger.i("onReceive");
         }

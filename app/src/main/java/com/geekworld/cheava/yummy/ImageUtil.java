@@ -1,7 +1,9 @@
 package com.geekworld.cheava.yummy;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,10 +20,10 @@ import hugo.weaving.DebugLog;
  * Created by Cheava on 2016/8/14 0014.
  */
 public class ImageUtil {
-
+    static Context context = BaseApplication.context();
     static String screenshotPath;
 
-    static MediaScannerConnection msc = new MediaScannerConnection(BaseApplication.context(), new MediaScannerConnection.MediaScannerConnectionClient() {
+    static MediaScannerConnection msc = new MediaScannerConnection(context, new MediaScannerConnection.MediaScannerConnectionClient() {
         public void onMediaScannerConnected() {
             msc.scanFile(screenshotPath, "image/jpeg");
         }
@@ -44,9 +46,9 @@ public class ImageUtil {
         view.buildDrawingCache();
         //从缓存中获取当前屏幕的图片
         Bitmap tempBmp = view.getDrawingCache();
-        String str = MediaStore.Images.Media.insertImage(BaseApplication.context().getContentResolver(),tempBmp,null, null);
+        String str = MediaStore.Images.Media.insertImage(context.getContentResolver(),tempBmp,null, null);
         Uri uri = Uri.parse(str);
-        screenshotPath = getFilePathByContentResolver(BaseApplication.context(),uri);
+        screenshotPath = getFilePathByContentResolver(context,uri);
         msc.connect();
         view.destroyDrawingCache();
         return screenshotPath;
@@ -79,11 +81,25 @@ public class ImageUtil {
         return filePath;
     }
 
+    public static Bitmap getThumb(int resid){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(),resid,options);
+
+        options.inJustDecodeBounds = false;
+        options.inDither=false;    /*不进行图片抖动处理*/
+        options.inPreferredConfig=null;  /*设置让解码器以最佳方式解码*/
+        /* 下面两个字段需要组合使用 */
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        Bitmap bmp = BitmapFactory.decodeResource(context.getResources(),resid,options);
+        return bmp;
+    }
+
     public static Bitmap getThumb(String path,int scale){
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(path, options);
-
 
         options.inSampleSize = scale;
         options.inJustDecodeBounds = false;

@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceHolder;
 
+import com.orhanobut.logger.Logger;
+
 import org.apache.commons.lang3.RandomUtils;
 import org.json.JSONObject;
 
@@ -105,7 +107,6 @@ public class ContentProvider {
         if (obj != null) {
             message.obj = obj;
         }
-
         handler.sendMessage(message);
     }
 
@@ -148,8 +149,8 @@ public class ContentProvider {
         return random;
     }
 
-    protected void finalize()
-    {
+    public void destroy(){
+        Logger.d("unregisterReceiver");
         context.unregisterReceiver(receiver);
     }
 }

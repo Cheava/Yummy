@@ -55,13 +55,13 @@ public class NaviHelper extends SpringFloatingActionMenu {
     static View.OnClickListener imgclick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //Toast.makeText(BaseApplication.context(),"爱你哦~ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(BaseApplication.context(),"程序猿哥哥还没调好这个功能.....就快来啦~ヾ(≧∇≦*)ゝ",Toast.LENGTH_SHORT).show();
             menu.hideMenu();
-            UMImage umImage = new UMImage(activity, R.drawable.ic_launcher);
+            UMImage umImage = new UMImage(activity, BitmapFactory.decodeFile(path));
             new ShareAction(activity)
-                    .setPlatform(SHARE_MEDIA.WEIXIN)
+                    .setPlatform(SHARE_MEDIA.SINA)
                     .setCallback(umShareListener)
-                    .withText("Hello 微信")
+                    .withText("")
                     .withMedia(umImage)
                     .share();
 
@@ -72,7 +72,7 @@ public class NaviHelper extends SpringFloatingActionMenu {
         //必须手动创建FAB, 并设置属性
         FloatingActionButton fab = new FloatingActionButton(context);
         fab.setType(FloatingActionButton.TYPE_NORMAL);
-        fab.setImageResource(R.drawable.center);
+        fab.setImageResource(R.mipmap.center);
         fab.setColorPressedResId(R.color.text_color);
         fab.setColorNormalResId(R.color.text_color);
         fab.setColorRippleResId(R.color.text_color);
@@ -85,12 +85,12 @@ public class NaviHelper extends SpringFloatingActionMenu {
         final SpringFloatingActionMenu menu = new SpringFloatingActionMenu.Builder(context)
                 .fab(fab)
                 //添加菜单按钮参数依次是背景颜色,图标,标签,标签的颜色,点击事件
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.center, null, R.color.text_color,imgclick)
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.wechat2, null, R.color.text_color,imgclick)
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.wechatcircle2, null, R.color.text_color,imgclick)
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.qq2, null, R.color.text_color,imgclick)
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.qqzone2, null, R.color.text_color,imgclick)
-                .addMenuItem(R.color.sweet_dialog_bg_color, R.drawable.weibo2, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.center, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.wechat2, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.wechatcircle2, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.qq2, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.qqzone2, null, R.color.text_color,imgclick)
+                .addMenuItem(R.color.sweet_dialog_bg_color, R.mipmap.weibo2, null, R.color.text_color,imgclick)
                 //设置动画类型
                 .animationType(SpringFloatingActionMenu.ANIMATION_TYPE_TUMBLR)
                 //设置reveal效果的颜色
@@ -101,13 +101,13 @@ public class NaviHelper extends SpringFloatingActionMenu {
                     @Override
                     public void onMenuOpen() {
                         //设置FAB的icon当菜单打开的时候
-                        mfab.setImageResource(R.drawable.close2);
+                        mfab.setImageResource(R.mipmap.close2);
                     }
 
                     @Override
                     public void onMenuClose() {
                         //设置回FAB的图标当菜单关闭的时候
-                        mfab.setImageResource(R.drawable.standby);
+                        mfab.setImageResource(R.mipmap.standby);
                     }
                 })
                 .build();

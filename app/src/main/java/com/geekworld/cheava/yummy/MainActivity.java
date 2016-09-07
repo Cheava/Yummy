@@ -38,12 +38,14 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
         ButterKnife.bind(this);
+        BaseApplication.disableSysLock();
         exit.setOnClickListener(this);
         btn_test.setOnClickListener(this);
         btn_time.setOnClickListener(this);
         btn_day.setOnClickListener(this);
         btn_day.setVisibility(View.INVISIBLE);
         btn_time.setVisibility(View.INVISIBLE);
+        btn_test.setVisibility(View.INVISIBLE);
         service = new Intent(this, LockService.class);
         startService(service);
 

@@ -13,6 +13,7 @@ import com.orhanobut.logger.Logger;
 
 import org.apache.commons.lang3.RandomUtils;
 
+import java.lang.ref.WeakReference;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,10 +34,8 @@ import retrofit2.Retrofit;
  * Created by Cheava on 2016/8/2 0002.
  */
 public class NetUtil {
-    static Bitmap bitmapAsy;
+    static WeakReference<Bitmap> bitmapAsy;
     static Word wordAsy;
-    static Bitmap bitmap;
-    static Word word;
     static int last_net_word_id = 0;
     static int last_net_img_id = 0;
     static String word_site = "https://api.acman.cn/";
@@ -118,7 +117,7 @@ public class NetUtil {
                     ResponseBody responseBody = response.body();
                     try {
                         byte date[] = responseBody.bytes();
-                        bitmapAsy = BitmapFactory.decodeByteArray(date, 0, date.length);
+                        bitmapAsy = new WeakReference<Bitmap>(BitmapFactory.decodeByteArray(date, 0, date.length));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -126,7 +125,7 @@ public class NetUtil {
                     Message message = new Message();
                     message.what = Constants.DOWN_IMG;
                     // 将服务器返回的结果存放到Message中
-                    message.obj = bitmapAsy;
+                    message.obj = bitmapAsy.get();
                     handler.sendMessage(message);
                 }
             }

@@ -2,6 +2,7 @@ package com.geekworld.cheava.yummy;
 
 import android.app.Activity;
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,17 +11,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.os.RemoteException;
+import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 
+import com.android.internal.telephony.ITelephony;
 import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
 import com.geekworld.cheava.greendao.ScreenContentDao;
 import com.geekworld.cheava.greendao.ScreenImageDao;
+import com.squareup.leakcanary.LeakCanary;
 import com.umeng.socialize.PlatformConfig;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.logging.Logger;
 
@@ -65,6 +72,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         _context = this;
+        //LeakCanary.install(this);
         /*
       * 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的
         SQLiteOpenHelper 对象
@@ -81,6 +89,8 @@ public class BaseApplication extends Application {
         //新浪微博 appkey appsecret
         PlatformConfig.setQQZone("1105543981", "ywjkSrKO0MzkDKzN");
         // qq qzone appid appkey
+
+        saveDisplaySize();
     }
 
     public static synchronized BaseApplication context() {
@@ -135,9 +145,9 @@ public class BaseApplication extends Application {
         return getPreferences().getLong(key, defValue);
     }
 
-    public static void saveDisplaySize(Context context) {
+    public static void saveDisplaySize() {
         DisplayMetrics displaymetrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager)context.getSystemService(context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager)context().getSystemService(context().WINDOW_SERVICE);
         windowManager.getDefaultDisplay()
                 .getRealMetrics(displaymetrics);
         SharedPreferences.Editor editor = getPreferences().edit();
@@ -238,4 +248,27 @@ public class BaseApplication extends Application {
         long result = DateTimeUtil.getDifMillis(now,record);
         return (result>0 && result<24*3600*1000);
     }
+
+    static public void  disableSysLock(){
+        KeyguardManager mKeyguardManager = (KeyguardManager)context().getSystemService(Context.KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock mKeyguardLock = mKeyguardManager.newKeyguardLock("LockScreenActivity");
+        mKeyguardLock.disableKeyguard();
+    }
+
+
+    static public boolean phoneIsInUse() {
+        boolean phoneInUse = false;
+        try {
+            TelephonyManager telephonyManager = (TelephonyManager)context().getSystemService(TELEPHONY_SERVICE);
+            Class<?> clz = Class.forName(telephonyManager.getClass().getName());
+            Method method = clz.getDeclaredMethod("getITelephony");
+            method.setAccessible(true);
+            ITelephony iTelephony = (ITelephony) method.invoke(telephonyManager);
+            if (iTelephony != null) phoneInUse = !iTelephony.isIdle();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return phoneInUse;
+    }
+
 }

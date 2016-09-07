@@ -1,6 +1,7 @@
 package com.geekworld.cheava.yummy;
 
 import android.app.Application;
+import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -27,12 +28,13 @@ public class LockService extends Service {
 
     @Override
     public void onCreate() {
+
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         // 注册广播监听器
-        registerReceiver(receiver, filter);
+        BaseApplication.context().registerReceiver(receiver, filter);
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.IMG_DOWNLOAD_DONE);
@@ -73,18 +75,14 @@ public class LockService extends Service {
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())) {
+            if (Intent.ACTION_SCREEN_ON.equals(intent.getAction())
+                    &&
+                    !BaseApplication.phoneIsInUse()
+                    ) {
                 Log.d("LockService", "收到开屏广播");
                 Intent lockscreen = new Intent(LockService.this, LockScreenActivity.class);
                 lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 lockscreen.putExtra("isSpecialDay", BaseApplication.isSpecialDay());
-                startActivity(lockscreen);
-            }
-            if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())) {
-                Log.d("LockService", "收到锁屏广播");
-                Intent lockscreen = new Intent(LockService.this, LockScreenActivity.class);
-                lockscreen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                lockscreen.putExtra("isSpecialDay",BaseApplication.isSpecialDay());
                 startActivity(lockscreen);
             }
 
@@ -134,7 +132,7 @@ public class LockService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
+        BaseApplication.context().unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
