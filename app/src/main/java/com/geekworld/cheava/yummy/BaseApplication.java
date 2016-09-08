@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.FeatureInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,7 +42,7 @@ import hugo.weaving.DebugLog;
  */
 public class BaseApplication extends Application {
     static private String PREF_NAME = "geekworld.pref";
-    static private String KEY_CONNECTED = "connected";
+    static private String KEY_CAMERA_ATTAIN = "is camera attain";
     static private String KEY_NEED_REFRESH_WORD = "need to refresh word";
     static private String KEY_NEED_REFRESH_IMG = "need to refresh image";
     static private String KEY_LAST_REFRESH_WORD = "last time refresh word";
@@ -72,25 +74,24 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         _context = this;
-        //LeakCanary.install(this);
-        /*
-      * 通过 DaoMaster 的内部类 DevOpenHelper，你可以得到一个便利的
-        SQLiteOpenHelper 对象
-      */
+
         helper = new DaoMaster.DevOpenHelper(BaseApplication.context(), "Content.db", null);
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
-
-        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
         //微信 appid appsecret
-        PlatformConfig.setSinaWeibo("3921700954","04b48b094faeb16683c32669824ebdad");
+        PlatformConfig.setWeixin("wxa44c5fa389a202b3", "6cd36b214c2c49dbf9bcf24d37db015f");
         //新浪微博 appkey appsecret
-        PlatformConfig.setQQZone("1105543981", "ywjkSrKO0MzkDKzN");
+        PlatformConfig.setSinaWeibo("1115284799", "5207f2233ae89aaf4645cfcc35a89649");
         // qq qzone appid appkey
 
+        PlatformConfig.setQQZone("1105543981", "ywjkSrKO0MzkDKzN");
+
+        com.umeng.socialize.utils.Log.LOG = true;
+
         saveDisplaySize();
+        setCameraAttain(checkCameraAttain());
     }
 
     public static synchronized BaseApplication context() {
@@ -169,6 +170,25 @@ public class BaseApplication extends Application {
                 getPreferences().getInt("screen_height", 1280)};
     }
 
+    public static boolean isCameraAttain() {
+        return get(KEY_CAMERA_ATTAIN, checkCameraAttain());
+    }
+
+    public static void setCameraAttain(boolean value) {
+        set(KEY_CAMERA_ATTAIN, value);
+    }
+
+    public static boolean checkCameraAttain() {
+        PackageManager pm = context().getPackageManager();
+        FeatureInfo[] features = pm.getSystemAvailableFeatures();
+        for (FeatureInfo f : features) {
+            if (PackageManager.FEATURE_CAMERA_FLASH.equals(f.name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isConnected() {
         ConnectivityManager cm = (ConnectivityManager) context().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) {
@@ -229,12 +249,12 @@ public class BaseApplication extends Application {
 
     public static String prettifyText(String text){
         String result;
-        result = text.replace("，","，\r\n");
-        result = result.replace("。","。\r\n");
-        result = result.replace("！","！\r\n");
-        result = result.replace("？","？\r\n");
-        result = result.replace(" "," \r\n");
-        result = result.replace(";","; \r\n");
+        result = text.replace("，", "，\r\n")
+                .replace("。", "。\r\n")
+                .replace("！", "！\r\n")
+                .replace("？", "？\r\n")
+                .replace(" ", " \r\n")
+                .replace(";", "; \r\n");
         return result;
     }
 

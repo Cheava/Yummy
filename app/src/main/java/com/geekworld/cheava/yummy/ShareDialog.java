@@ -62,8 +62,7 @@ public class ShareDialog extends Dialog {
                     @Override
                     public void onClick(View v) {
                         dialogBuilder.dismiss();
-                        NaviHelper naviHelper = NaviHelper.getInstance((Activity) context);
-                        naviHelper.share(path);
+                        NaviHelper.getInstance((Activity) context).share(path);
                     }
                 })
                 .setButton2Click(new View.OnClickListener() {

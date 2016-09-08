@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.logger.Logger;
+import com.umeng.socialize.UMShareAPI;
 
 import org.apache.commons.lang3.RandomUtils;
 
@@ -46,8 +47,6 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Bind(R.id.fullscreen_content)TextView content;
     @Bind(R.id.background)ImageView background;
     @Bind(R.id.time)StrokeTextView time;
-
-
 
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
@@ -90,8 +89,8 @@ public class LockScreenActivity extends SwipeBackActivity{
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
         this.getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
         setContentView(R.layout.activity_lock_screen);
         ButterKnife.bind(this);
@@ -126,6 +125,7 @@ public class LockScreenActivity extends SwipeBackActivity{
             //content.setText(savedInstanceState.getString("data_key"));
         }
         startRefresh(specialDelay);
+        NaviHelper.getInstance(this).standby(null);
     }
 
 
@@ -165,6 +165,7 @@ public class LockScreenActivity extends SwipeBackActivity{
             Logger.i("双击");
             //stopRefresh();
             String img = ImageUtil.screenShot(LockScreenActivity.this);
+            BaseApplication.set(getResources().getString(R.string.screen_shot_path), img);
             ShareDialog shareDialog = new ShareDialog(LockScreenActivity.this);
             shareDialog.showDialog(img);
             return true;
@@ -227,6 +228,7 @@ public class LockScreenActivity extends SwipeBackActivity{
     protected void onDestroy() {
         super.onDestroy();
         contentProvider.destroy();
+        NaviHelper.getInstance(this).destroy();
         stopRefresh();
         recycleImageView(background);
         System.gc();
@@ -244,5 +246,11 @@ public class LockScreenActivity extends SwipeBackActivity{
         super.onSaveInstanceState(outState);
         outState.putString("last_word", (String) content.getText());
         //outState.putString("last_image_path", (String) content.getText());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 }

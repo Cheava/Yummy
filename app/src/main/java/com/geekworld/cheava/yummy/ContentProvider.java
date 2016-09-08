@@ -38,7 +38,6 @@ import hugo.weaving.DebugLog;
  * Created by Cheava on 2016/7/3 0003.
  */
 public class ContentProvider {
-    ACache acache = ACache.get(BaseApplication.context());
     Context context = BaseApplication.context();
     Handler handler;
     static int show_word_id = 0;

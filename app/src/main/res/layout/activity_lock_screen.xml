@@ -27,6 +27,7 @@
         android:textColor="@color/primary_material_light"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:maxEms="14"
         android:layout_gravity="left|bottom"
         android:theme="@android:style/Widget.Holo.Light.TextView"
         android:shadowColor="@color/primary_dark_material_dark" />

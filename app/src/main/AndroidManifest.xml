@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -69,7 +70,7 @@
 
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="4eaee02c527015373b000003" >
+            android:value="57b1881167e58eec8f003070">
         </meta-data>
 
         <activity
@@ -87,7 +88,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="tencent100424468" />
+
+                <data android:scheme="tencent1105543981" />
             </intent-filter>
         </activity>
 
