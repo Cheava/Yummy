@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/material_grey_100"
-    tools:context="com.geekworld.cheava.yummy.LockScreenActivity"
+    tools:context="com.geekworld.cheava.yummy.view.LockScreenActivity"
     android:clickable="false">
 
     <!-- The primary full-screen view. This can be replaced with whatever view
@@ -17,7 +17,7 @@
         android:clickable="true" />
 
 
-    <com.geekworld.cheava.yummy.StrokeTextView
+    <com.geekworld.cheava.yummy.view.StrokeTextView
         android:id="@+id/fullscreen_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:theme="@android:style/Widget.Holo.Light.TextView"
         android:shadowColor="@color/primary_dark_material_dark" />
 
-    <com.geekworld.cheava.yummy.StrokeTextView
+    <com.geekworld.cheava.yummy.view.StrokeTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/time"

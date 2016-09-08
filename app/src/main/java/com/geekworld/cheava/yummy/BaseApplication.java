@@ -1,24 +1,18 @@
 package com.geekworld.cheava.yummy;
 
-import android.app.Activity;
 import android.app.Application;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Environment;
-import android.os.RemoteException;
-import android.provider.Telephony;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.WindowManager;
 
 import com.android.internal.telephony.ITelephony;
@@ -26,14 +20,11 @@ import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
 import com.geekworld.cheava.greendao.ScreenContentDao;
 import com.geekworld.cheava.greendao.ScreenImageDao;
-import com.squareup.leakcanary.LeakCanary;
+import com.geekworld.cheava.yummy.utils.DateTimeUtil;
 import com.umeng.socialize.PlatformConfig;
 
 import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.logging.Logger;
 
-import de.greenrobot.dao.async.AsyncSession;
 import hugo.weaving.DebugLog;
 
 
@@ -232,7 +223,7 @@ public class BaseApplication extends Application {
     }
 
     public static void setLastRefreshWord(){
-        set(KEY_LAST_REFRESH_WORD,DateTimeUtil.getCurrentDateTimeString());
+        set(KEY_LAST_REFRESH_WORD, DateTimeUtil.getCurrentDateTimeString());
     }
 
     public static String getLastRefreshWord(){

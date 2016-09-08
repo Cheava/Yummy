@@ -20,7 +20,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('D:\\Cheava\\Data\\keynote\\AppKey.jks')
+            storeFile file('AppKey.jks')
             storePassword 'cheava!123'
             keyAlias 'cheava'
             keyPassword 'cheava!123'

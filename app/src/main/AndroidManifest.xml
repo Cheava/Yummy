@@ -47,12 +47,12 @@
         </activity>
 
         <service
-            android:name=".LockService"
+            android:name=".presenter.LockService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".LockScreenActivity"
+            android:name=".view.LockScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_lock_screen"
             android:theme="@style/LockScreenBase"
@@ -74,7 +74,7 @@
         </meta-data>
 
         <activity
-            android:name="com.geekworld.cheava.yummy.WXEntryActivity"
+            android:name="com.geekworld.cheava.yummy.share.WXEntryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -99,7 +99,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name="com.geekworld.cheava.yummy.WBShareActivity"
+            android:name="com.geekworld.cheava.yummy.share.WBShareActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait" >
             <intent-filter>

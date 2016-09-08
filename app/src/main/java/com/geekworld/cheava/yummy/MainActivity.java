@@ -1,13 +1,14 @@
+
 package com.geekworld.cheava.yummy;
+
 
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -15,6 +16,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.geekworld.cheava.yummy.presenter.ContentProvider;
+import com.geekworld.cheava.yummy.presenter.LockService;
+import com.geekworld.cheava.yummy.utils.DateTimeUtil;
+import com.geekworld.cheava.yummy.view.LockScreenActivity;
 import com.orhanobut.logger.Logger;
 
 import java.util.Calendar;
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
                                 c.set(Calendar.YEAR,year);
                                 c.set(Calendar.MONTH, month);
                                 c.set(Calendar.DAY_OF_MONTH, day);
-                                BaseApplication.set(getResources().getString(R.string.special_day),DateTimeUtil.CalendarToString(c));
+                                BaseApplication.set(getResources().getString(R.string.special_day), DateTimeUtil.CalendarToString(c));
                                 Logger.i(DateTimeUtil.CalendarToString(c)+"");   //这里的时间是一个unix时间戳
                                 // 提示闹钟设置完毕:
                                 Toast.makeText(MainActivity.this, "日期设置完毕~"+DateTimeUtil.CalendarToString(c),
