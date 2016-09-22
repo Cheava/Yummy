@@ -2,17 +2,26 @@ package com.geekworld.cheava.yummy;
 
 import android.app.Application;
 import android.app.KeyguardManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.PowerManager;
+import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
+import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 import com.android.internal.telephony.ITelephony;
@@ -20,29 +29,40 @@ import com.geekworld.cheava.greendao.DaoMaster;
 import com.geekworld.cheava.greendao.DaoSession;
 import com.geekworld.cheava.greendao.ScreenContentDao;
 import com.geekworld.cheava.greendao.ScreenImageDao;
+import com.geekworld.cheava.yummy.presenter.ContentProvider;
+import com.geekworld.cheava.yummy.utils.ACache;
+import com.geekworld.cheava.yummy.utils.CacheUtil;
 import com.geekworld.cheava.yummy.utils.DateTimeUtil;
+import com.geekworld.cheava.yummy.bean.Config;
+import com.orhanobut.logger.Logger;
+import com.squareup.leakcanary.LeakCanary;
 import com.umeng.socialize.PlatformConfig;
 
 import java.lang.reflect.Method;
+import java.util.Timer;
 
 import hugo.weaving.DebugLog;
 
-
-/**
- * Created by Cheava on 2016/7/27 0027.
- */
+/*
+* @class BaseApplication
+* @desc  全局控制
+* @author wangzh
+*/
 public class BaseApplication extends Application {
     static private String PREF_NAME = "geekworld.pref";
-    static private String KEY_CAMERA_ATTAIN = "is camera attain";
+
     static private String KEY_NEED_REFRESH_WORD = "need to refresh word";
     static private String KEY_NEED_REFRESH_IMG = "need to refresh image";
     static private String KEY_LAST_REFRESH_WORD = "last time refresh word";
     static private String KEY_LAST_REFRESH_IMG = "last time refresh image";
+
+
     static BaseApplication _context;
     public static DaoMaster daoMaster;
     public static DaoSession daoSession;
     public static SQLiteDatabase db;
     public static DaoMaster.DevOpenHelper helper;
+
 
 
     public static DaoSession getDaoSession() {
@@ -82,7 +102,8 @@ public class BaseApplication extends Application {
         com.umeng.socialize.utils.Log.LOG = true;
 
         saveDisplaySize();
-        setCameraAttain(checkCameraAttain());
+        CacheUtil.setCameraAttain(checkCameraAttain());
+        //LeakCanary.install(this);
     }
 
     public static synchronized BaseApplication context() {
@@ -142,32 +163,9 @@ public class BaseApplication extends Application {
         WindowManager windowManager = (WindowManager)context().getSystemService(context().WINDOW_SERVICE);
         windowManager.getDefaultDisplay()
                 .getRealMetrics(displaymetrics);
-        SharedPreferences.Editor editor = getPreferences().edit();
-        editor.putInt("screen_width", displaymetrics.widthPixels);
-        editor.putInt("screen_height", displaymetrics.heightPixels);
-        editor.commit();
+        CacheUtil.setScreenSize(displaymetrics.widthPixels,displaymetrics.heightPixels);
     }
 
-    public static int getScreenWidth() {
-        return getPreferences().getInt("screen_width", 720);
-    }
-
-    public static int getScreenHeight() {
-        return getPreferences().getInt("screen_height", 1280);
-    }
-
-    public static int[] getDisplayY() {
-        return new int[]{getPreferences().getInt("screen_width", 720),
-                getPreferences().getInt("screen_height", 1280)};
-    }
-
-    public static boolean isCameraAttain() {
-        return get(KEY_CAMERA_ATTAIN, checkCameraAttain());
-    }
-
-    public static void setCameraAttain(boolean value) {
-        set(KEY_CAMERA_ATTAIN, value);
-    }
 
     public static boolean checkCameraAttain() {
         PackageManager pm = context().getPackageManager();
@@ -194,26 +192,6 @@ public class BaseApplication extends Application {
         return false;
     }
 
-    public static boolean isNeedRefreshWord(){
-        return get(KEY_NEED_REFRESH_WORD, true);
-    }
-
-    public static void setNeedRefreshWord(Boolean refreshWord) {
-        set(KEY_NEED_REFRESH_WORD,refreshWord);
-    }
-
-    public static boolean isNeedRefreshImg(){
-        return get(KEY_NEED_REFRESH_IMG, true);
-    }
-
-    public static void setNeedRefreshImg(Boolean refreshWord) {
-        set(KEY_NEED_REFRESH_IMG,refreshWord);
-    }
-    public static void sendLocalBroadcast(String info) {
-        Intent intent = new Intent(info);
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context());
-        localBroadcastManager.sendBroadcast(intent); // 发送本地广播
-    }
 
     public static String getImgName(int key){
         return Integer.toString(key)+".jpg"; //获得私有文件的目录
@@ -222,20 +200,10 @@ public class BaseApplication extends Application {
         return context().getFilesDir().getAbsolutePath()+"/"+getImgName(key); //获得私有文件的目录
     }
 
-    public static void setLastRefreshWord(){
-        set(KEY_LAST_REFRESH_WORD, DateTimeUtil.getCurrentDateTimeString());
-    }
-
-    public static String getLastRefreshWord(){
-       return get(KEY_LAST_REFRESH_WORD,"2014-08-27 01:02:03");
-    }
-
-    public static void setLastRefreshImg(){
-        set(KEY_LAST_REFRESH_IMG,DateTimeUtil.getCurrentDateTimeString());
-    }
-
-    public static String getLastRefreshImg(){
-       return get(KEY_LAST_REFRESH_IMG,"2014-08-27 01:02:03");
+    public static void sendLocalBroadcast(String info) {
+        Intent intent = new Intent(info);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context());
+        localBroadcastManager.sendBroadcast(intent); // 发送本地广播
     }
 
     public static String prettifyText(String text){
@@ -260,10 +228,11 @@ public class BaseApplication extends Application {
         return (result>0 && result<24*3600*1000);
     }
 
-    static public void  disableSysLock(){
-        KeyguardManager mKeyguardManager = (KeyguardManager)context().getSystemService(Context.KEYGUARD_SERVICE);
-        KeyguardManager.KeyguardLock mKeyguardLock = mKeyguardManager.newKeyguardLock("LockScreenActivity");
+    static public void  disableSysLock(Context context,String activity){
+        KeyguardManager mKeyguardManager = (KeyguardManager)context.getSystemService(Context.KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock mKeyguardLock = mKeyguardManager.newKeyguardLock(activity);
         mKeyguardLock.disableKeyguard();
+        Log.i("BaseApplication","disableSysLock");
     }
 
 
@@ -280,6 +249,77 @@ public class BaseApplication extends Application {
             e.printStackTrace();
         }
         return phoneInUse;
+    }
+
+    public static String getRealFilePath( final Context context, final Uri uri ) {
+        if ( null == uri ) return null;
+        final String scheme = uri.getScheme();
+        String data = null;
+        if ( scheme == null )
+            data = uri.getPath();
+        else if ( ContentResolver.SCHEME_FILE.equals( scheme ) ) {
+            data = uri.getPath();
+        } else if ( ContentResolver.SCHEME_CONTENT.equals( scheme ) ) {
+            Cursor cursor = context.getContentResolver().query( uri, new String[] { MediaStore.Images.ImageColumns.DATA }, null, null, null );
+            if ( null != cursor ) {
+                if ( cursor.moveToFirst() ) {
+                    int index = cursor.getColumnIndex( MediaStore.Images.ImageColumns.DATA );
+                    if ( index > -1 ) {
+                        data = cursor.getString( index );
+                    }
+                }
+                cursor.close();
+            }
+        }
+        return data;
+    }
+
+    /**
+     * 根据Uri获取图片路径
+     *
+     * @param context the context
+     * @param uri     the uri
+     * @return file path by content resolver
+     */
+    public static String getFilePathByContentResolver(Context context, Uri uri) {
+        if (null == uri) {
+            return null;
+        }
+        Cursor c = context.getContentResolver().query(uri, null, null, null, null);
+        String filePath  = null;
+        if (null == c) {
+            throw new IllegalArgumentException(
+                    "Query on " + uri + " returns null result.");
+        }
+        try {
+            if ((c.getCount() != 1) || !c.moveToFirst()) {
+            } else {
+                filePath = c.getString(c.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA));
+            }
+        } finally {
+            c.close();
+        }
+        return filePath;
+    }
+
+    static public boolean isMySMS(Intent intent){
+        Bundle bundle = intent.getExtras();
+        Object[] pdus = (Object[]) bundle.get("pdus"); // 提取短信消息
+        SmsMessage[] messages = new SmsMessage[pdus.length];
+        for (int i = 0; i < messages.length; i++) {
+            messages[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+        }
+        String address = messages[0].getOriginatingAddress(); // 获取发送方号码
+        Logger.i(address+"/"+context().getString(R.string.my_num));
+        return (address.equals(context().getString(R.string.my_num)));
+    }
+
+    static public void lightScreen(String activity){
+        PowerManager pm = (PowerManager)context().getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
+                | PowerManager.ON_AFTER_RELEASE, "BaseApplication");
+        mWakeLock.acquire(10);
+        disableSysLock(context(),activity);
     }
 
 }

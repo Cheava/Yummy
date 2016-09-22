@@ -14,7 +14,8 @@
         android:layout_height="match_parent"
         android:id="@+id/background"
         android:layout_gravity="center"
-        android:clickable="true" />
+        android:clickable="true"
+        tools:ignore="ContentDescription" />
 
 
     <com.geekworld.cheava.yummy.view.StrokeTextView
@@ -27,7 +28,7 @@
         android:textColor="@color/primary_material_light"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:maxEms="14"
+        android:maxEms="12"
         android:layout_gravity="left|bottom"
         android:theme="@android:style/Widget.Holo.Light.TextView"
         android:shadowColor="@color/primary_dark_material_dark" />
