@@ -12,6 +12,6 @@ import retrofit2.http.Query;
 */
 
 public interface WordSite {
-    @GET("zhaiyan/taici")
+    @GET("api/json")
     Call<Word> getResult(@Query("id") String id);
 }

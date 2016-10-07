@@ -194,7 +194,6 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        //stopRefresh();
         Log.d(TAG, "onStop");
     }
 

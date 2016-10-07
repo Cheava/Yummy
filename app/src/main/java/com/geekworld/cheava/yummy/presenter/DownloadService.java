@@ -18,6 +18,8 @@ import com.geekworld.cheava.yummy.utils.CacheUtil;
 import com.geekworld.cheava.yummy.utils.DateTimeUtil;
 import com.geekworld.cheava.yummy.utils.NetUtil;
 
+import cn.bmob.v3.update.BmobUpdateAgent;
+
 public class DownloadService extends Service {
     public static final String TAG = "DownloadService";
 
@@ -32,7 +34,6 @@ public class DownloadService extends Service {
 
     @Override
     public void onCreate() {
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         // 注册广播监听器
@@ -73,7 +74,7 @@ public class DownloadService extends Service {
                 NetUtil.downloadImg();
             }
         }
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_STICKY;
     }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {

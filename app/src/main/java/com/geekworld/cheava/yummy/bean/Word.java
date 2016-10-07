@@ -7,67 +7,140 @@ package com.geekworld.cheava.yummy.bean;
 */
 public class Word {
 
+
     /**
-     * id : 73
-     * taici : 请不要忘记，那给你带来感动的，名为二次元的理想乡。
-     * cat : e
-     * catcn : 原创
-     * show : null
-     * source : 原创
+     * code : 1
+     * notice : {"date":"2016-09-28","title":"宅言api维护通知","content":"宅言数据构调整，维护时间2016-09-28~2016-09-30"}
+     * data : {"id":"1627","taici":"活在只承认实力的世界，可能的确是布满靳棘。","cat":"a","catcn":"动画","show":null,"source":"学园救援团"}
      */
 
-    private String id;
-    private String taici;
-    private String cat;
-    private String catcn;
-    private Object show;
-    private String source;
+    private String code;
+    /**
+     * date : 2016-09-28
+     * title : 宅言api维护通知
+     * content : 宅言数据构调整，维护时间2016-09-28~2016-09-30
+     */
 
-    public String getId() {
-        return id;
+    private NoticeBean notice;
+    /**
+     * id : 1627
+     * taici : 活在只承认实力的世界，可能的确是布满靳棘。
+     * cat : a
+     * catcn : 动画
+     * show : null
+     * source : 学园救援团
+     */
+
+    private DataBean data;
+
+    public String getCode() {
+        return code;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getTaici() {
-        return taici;
+    public NoticeBean getNotice() {
+        return notice;
     }
 
-    public void setTaici(String taici) {
-        this.taici = taici;
+    public void setNotice(NoticeBean notice) {
+        this.notice = notice;
     }
 
-    public String getCat() {
-        return cat;
+    public DataBean getData() {
+        return data;
     }
 
-    public void setCat(String cat) {
-        this.cat = cat;
+    public void setData(DataBean data) {
+        this.data = data;
     }
 
-    public String getCatcn() {
-        return catcn;
+    public static class NoticeBean {
+        private String date;
+        private String title;
+        private String content;
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
     }
 
-    public void setCatcn(String catcn) {
-        this.catcn = catcn;
-    }
+    public static class DataBean {
+        private String id;
+        private String taici;
+        private String cat;
+        private String catcn;
+        private Object show;
+        private String source;
 
-    public Object getShow() {
-        return show;
-    }
+        public String getId() {
+            return id;
+        }
 
-    public void setShow(Object show) {
-        this.show = show;
-    }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-    public String getSource() {
-        return source;
-    }
+        public String getTaici() {
+            return taici;
+        }
 
-    public void setSource(String source) {
-        this.source = source;
+        public void setTaici(String taici) {
+            this.taici = taici;
+        }
+
+        public String getCat() {
+            return cat;
+        }
+
+        public void setCat(String cat) {
+            this.cat = cat;
+        }
+
+        public String getCatcn() {
+            return catcn;
+        }
+
+        public void setCatcn(String catcn) {
+            this.catcn = catcn;
+        }
+
+        public Object getShow() {
+            return show;
+        }
+
+        public void setShow(Object show) {
+            this.show = show;
+        }
+
+        public String getSource() {
+            return source;
+        }
+
+        public void setSource(String source) {
+            this.source = source;
+        }
     }
 }

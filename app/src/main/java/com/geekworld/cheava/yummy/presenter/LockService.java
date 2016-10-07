@@ -5,22 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.IBinder;
-import android.os.Parcelable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.geekworld.cheava.yummy.BaseApplication;
-import com.geekworld.cheava.yummy.bean.Constants;
 import com.geekworld.cheava.yummy.utils.ACache;
-import com.geekworld.cheava.yummy.utils.DateTimeUtil;
-import com.geekworld.cheava.yummy.utils.NetUtil;
 import com.geekworld.cheava.yummy.view.LockScreenActivity;
 import com.geekworld.cheava.yummy.view.SpecialMoment;
 import com.orhanobut.logger.Logger;
+import com.sina.weibo.sdk.api.share.Base;
 
 /*
 * @class LockService
@@ -55,7 +48,7 @@ public class LockService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_STICKY;
     }
 
     BroadcastReceiver lockscreen_receiver = new BroadcastReceiver() {
@@ -95,7 +88,7 @@ public class LockService extends Service {
             }
             if (Intent.ACTION_SCREEN_OFF.equals(intent.getAction())
                     &&
-                    !BaseApplication.phoneIsInUse()
+                    !BaseApplication.isEarpieceUsing()
                     ) {
                 Log.i("LockService", "收到锁屏广播");
                 lockscreen = new Intent(LockService.this, LockScreenActivity.class);

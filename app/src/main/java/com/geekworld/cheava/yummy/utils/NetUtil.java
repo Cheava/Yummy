@@ -60,7 +60,7 @@ public class NetUtil {
     /**
      * The Word site.
      */
-    static String word_site = "https://api.acman.cn/";
+    static String word_site = "https://zhaiyan.acman.cn/";
     /**
      * The Img site.
      */
@@ -236,7 +236,7 @@ public class NetUtil {
                     Word wordJson = (Word) msg.obj;
                     BaseApplication.get("last_net_word_id", last_net_word_id);
                     last_net_word_id = last_net_word_id + 1;
-                    String word = wordJson.getTaici();
+                    String word = wordJson.getData().getTaici();
                     DataUtils.save(last_net_word_id, word);
                     BaseApplication.set("last_net_word_id", last_net_word_id);
 

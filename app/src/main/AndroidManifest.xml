@@ -31,6 +31,8 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".BaseApplication"
@@ -40,7 +42,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,6 +59,7 @@
 
         <activity
             android:name=".view.LockScreenActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_lock_screen"
@@ -66,6 +71,7 @@
 
         <activity
             android:name=".view.SpecialMoment"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_lock_screen"
@@ -121,6 +127,12 @@
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
+
+
+        <activity
+            android:name="cn.bmob.v3.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
 
         <service
             android:name=".presenter.DownloadService"
