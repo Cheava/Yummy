@@ -17,9 +17,7 @@ public class Constants {
 
 
     //信号常量
-    public static final int SHOW_WORD = 1;
-    public static final int SHOW_IMG = 2;
-    public static final int SHOW_TIME = 3;
+    public static final int REQUEST_CODE_TAKE_PICTURE = 1;
     public static final int DOWN_WORD = 11;
     public static final int DOWN_IMG = 12;
 

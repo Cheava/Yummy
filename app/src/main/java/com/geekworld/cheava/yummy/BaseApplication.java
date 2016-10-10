@@ -60,11 +60,6 @@ import hugo.weaving.DebugLog;
 public class BaseApplication extends Application {
     static private String PREF_NAME = "geekworld.pref";
 
-    static private String KEY_NEED_REFRESH_WORD = "need to refresh word";
-    static private String KEY_NEED_REFRESH_IMG = "need to refresh image";
-    static private String KEY_LAST_REFRESH_WORD = "last time refresh word";
-    static private String KEY_LAST_REFRESH_IMG = "last time refresh image";
-
     static private SensorManager mManager;//传感器管理对象
     static volatile private Boolean isEarClose = false;
 

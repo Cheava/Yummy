@@ -1,18 +1,24 @@
 package com.geekworld.cheava.yummy.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
 import com.geekworld.cheava.yummy.BaseApplication;
+import com.geekworld.cheava.yummy.bean.Constants;
 import com.geekworld.cheava.yummy.bean.FlashLight;
 import com.geekworld.cheava.yummy.view.FabMenuFactory;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.io.File;
 
 /**
  * Created by Cheava on 2016/9/15 0015.
@@ -34,17 +40,10 @@ public class FastTools {
     public void toolsHandler() {
         switch (tools) {
             case CAMERA:
-                try {
-                    closeFlashLight();
-                    releaseLight();
-                }catch (Exception e){
-                    e.printStackTrace();
-                    Logger.e("Can't release flashlight");
-                }
-                startCommonTools(MediaStore.ACTION_IMAGE_CAPTURE);
+                startCamera();
                 break;
             case PHONE:
-                startCommonTools(Intent.ACTION_DIAL);
+                startDial();
                 break;
             case LIGHT:
                 startLightTools();
@@ -57,15 +56,24 @@ public class FastTools {
                 break;
         }
     }
-
-    //不带参数的快捷启动
-    private void startCommonTools(String tools) {
-        if(tools == null) return;
-        Intent intent = new Intent();
-        intent.setAction(tools);
-        context.startActivity(intent);
+    private void startCamera() {
+        try {
+            closeFlashLight();
+            releaseLight();
+        }catch (Exception e){
+            e.printStackTrace();
+            Logger.e("Can't release flashlight");
+        }
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        String f = System.currentTimeMillis()+".jpg";
+        Uri fileUri = Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory("").getPath()+f));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); //指定图片存放位置，指定后，在onActivityResult里得到的Data将为null
+        ((Activity)context).startActivityForResult(intent, Constants.REQUEST_CODE_TAKE_PICTURE);
     }
 
+    private void startDial() {
+        context.startActivity(new Intent(Intent.ACTION_DIAL));
+    }
 
     private void startMsgTools() {
         Intent intent = new Intent(Intent.ACTION_MAIN);

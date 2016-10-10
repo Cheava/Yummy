@@ -31,7 +31,9 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
     <application
@@ -57,29 +59,34 @@
             android:enabled="true"
             android:exported="true" />
 
+        <receiver android:name=".presenter.LockScreenReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".view.LockScreenActivity"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_lock_screen"
             android:launchMode="singleInstance"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:taskAffinity="com.geekworld.cheava.yummy"
-            android:theme="@style/LockScreenBase"/>
-
-
+            android:theme="@style/LockScreenBase" />
         <activity
             android:name=".view.SpecialMoment"
-            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_lock_screen"
             android:launchMode="singleInstance"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:taskAffinity="com.geekworld.cheava.yummy"
-            android:theme="@style/LockScreenBase"/>
-
+            android:theme="@style/LockScreenBase" />
         <activity
             android:name="com.umeng.socialize.editorpage.ShareActivity"
             android:excludeFromRecents="true"
@@ -87,7 +94,7 @@
 
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="57b1881167e58eec8f003070"/>
+            android:value="57b1881167e58eec8f003070" />
 
         <activity
             android:name=".share.WXEntryActivity"
@@ -126,18 +133,16 @@
             android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
             android:configChanges="keyboardHidden|orientation"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
-
-
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="cn.bmob.v3.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
         <service
             android:name=".presenter.DownloadService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+
     </application>
 
 </manifest>

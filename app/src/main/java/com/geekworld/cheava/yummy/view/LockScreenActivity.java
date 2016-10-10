@@ -5,10 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -68,7 +70,7 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
+        Log.i(TAG,"onCreate");
         this.getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -187,14 +189,14 @@ public class LockScreenActivity extends SwipeBackActivity{
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
+        Log.i(TAG, "onStart");
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop");
+        Log.i(TAG, "onStop");
     }
 
     @Override
@@ -206,13 +208,27 @@ public class LockScreenActivity extends SwipeBackActivity{
         recycleImageView(background);
         System.gc();
         EventBus.getDefault().unregister(this);
-        Log.d(TAG, "onDestroy");
+        Log.i(TAG, "onDestroy");
         super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG,"onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+
+
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_TAKE_PICTURE:
+                if ( resultCode == RESULT_OK) {
+                    Uri imageUri = (Uri) data.getExtras().get(MediaStore.EXTRA_OUTPUT);
+                    //广播刷新相册
+                    Intent intentBc = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                    intentBc.setData(imageUri);
+                    this.sendBroadcast(intentBc);
+                }
+                break;
+        }
     }
 }
